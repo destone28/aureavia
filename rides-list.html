@@ -18,7 +18,7 @@
         body {
             font-family: 'Open Sans', sans-serif;
             background: url('assets/bg_user.png') center center / cover no-repeat fixed;
-            padding-top: 120px;
+            padding-top: 84px;
         }
 
         .header {
@@ -40,11 +40,19 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            gap: 12px;
         }
 
         .header-logo img {
             height: 32px;
             width: auto;
+        }
+
+        .header-logo-text {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .header-right {
@@ -139,16 +147,23 @@
             stroke: #FF5252;
         }
 
-        .navigation-tabs {
-            position: fixed;
-            top: 64px;
-            left: 0;
-            right: 0;
-            height: 56px;
+        .filters-box-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px 20px 20px;
+        }
+
+        .filters-box {
             background: #FFFFFF;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+
+        .navigation-tabs {
             display: flex;
-            z-index: 99;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid #E0E0E0;
+            height: 50px;
         }
 
         .tab {
@@ -162,7 +177,7 @@
             cursor: pointer;
             border-bottom: 3px solid transparent;
             transition: all 0.2s;
-            padding: 0 24px;
+            padding: 16px 24px;
         }
 
         .tab:hover {
@@ -175,7 +190,6 @@
         }
 
         .filters-section {
-            background: #FFFFFF;
             border-bottom: 1px solid #E0E0E0;
         }
 
@@ -364,8 +378,37 @@
             transform: scale(0.97);
         }
 
+        .page-header {
+            max-width: 800px;
+            margin: 0 auto 24px auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0;
+        }
+
+        .page-icon {
+            width: 32px;
+            height: 32px;
+        }
+
+        .filters-box-wrapper {
+            max-width: 800px;
+            margin: 0 auto 20px auto;
+            padding: 0 20px;
+        }
+
         .rides-container {
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .ride-card {
@@ -551,6 +594,10 @@
                 font-size: 18px;
             }
 
+            .header-logo-text {
+                display: none;
+            }
+
             .header-user-name,
             .header-avatar {
                 display: none;
@@ -600,6 +647,7 @@
     <header class="header">
         <div class="header-logo" onclick="navigateTo('rides-list')">
             <img src="assets/logo.png" alt="AUREAVIA">
+            <span class="header-logo-text">AUREAVIA Driver</span>
         </div>
         <div class="header-right">
             <span class="header-user-name">Marco Rossi</span>
@@ -657,14 +705,26 @@
         </div>
     </div>
 
-    <nav class="navigation-tabs">
-        <div class="tab active" data-filter="all" onclick="setActiveTab('all')" tabindex="0" role="tab">All Rides</div>
-        <div class="tab" data-filter="available" onclick="setActiveTab('available')" tabindex="0" role="tab">Available</div>
-        <div class="tab" data-filter="assigned" onclick="setActiveTab('assigned')" tabindex="0" role="tab">Assigned</div>
-    </nav>
+    <div class="page-header">
+        <h1 class="page-title">Rides List</h1>
+        <svg class="page-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+        </svg>
+    </div>
 
-    <section class="filters-section">
-        <div class="filters-header" onclick="toggleFilters()">
+    <div class="filters-box-wrapper">
+        <div class="filters-box">
+            <nav class="navigation-tabs">
+                <div class="tab active" data-filter="all" onclick="setActiveTab('all')" tabindex="0" role="tab">All Rides</div>
+                <div class="tab" data-filter="available" onclick="setActiveTab('available')" tabindex="0" role="tab">Available</div>
+                <div class="tab" data-filter="assigned" onclick="setActiveTab('assigned')" tabindex="0" role="tab">Assigned</div>
+            </nav>
+
+            <section class="filters-section">
+                <div class="filters-header" onclick="toggleFilters()">
             <div class="filters-title-wrapper">
                 <h2 class="filters-title">Filter Rides</h2>
                 <span class="filters-count" id="filterCount" style="display: none;">0</span>
@@ -731,8 +791,9 @@
                     <div class="chip" data-filter="distance" data-value=">50" onclick="toggleFilter('distance', '>50')" tabindex="0" role="button">&gt;50 km</div>
                 </div>
             </div>
+            </section>
         </div>
-    </section>
+    </div>
 
     <div class="rides-container" id="ridesContainer">
         <!-- Ride 1 -->

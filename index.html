@@ -42,9 +42,23 @@
             text-align: center;
         }
 
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
         .logo img {
             height: 48px;
             width: auto;
+        }
+
+        .logo-text {
+            color: #2D2D2D;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .title {
@@ -171,6 +185,10 @@
                 font-size: 32px;
             }
 
+            .logo-text {
+                display: none;
+            }
+
             .logo-v {
                 font-size: 36px;
             }
@@ -185,6 +203,7 @@
     <div class="card-container">
         <div class="logo">
             <img src="assets/logo.png" alt="AUREAVIA">
+            <span class="logo-text">AUREAVIA Driver</span>
         </div>
 
         <h1 class="title">Driver Login</h1>

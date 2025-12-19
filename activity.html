@@ -40,6 +40,14 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo-text {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .header-logo img {
@@ -136,7 +144,7 @@
 
         .content {
             padding: 20px;
-            max-width: 1200px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
@@ -164,6 +172,10 @@
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 16px;
             margin-bottom: 24px;
+        }
+
+        .stats-grid.two-columns {
+            grid-template-columns: repeat(2, 1fr);
         }
 
         .stat-card {
@@ -329,9 +341,36 @@
             margin-top: 4px;
         }
 
+        .stat-label-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-label-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label-row .stat-label {
+            margin: 0;
+        }
+
+        .stat-label-row .rating-subtitle {
+            margin: 0;
+            font-size: 14px;
+            color: #666666;
+        }
+
         @media (max-width: 768px) {
             .header-logo {
                 font-size: 18px;
+            }
+
+            .header-logo-text {
+                display: none;
             }
 
             .header-user-name {
@@ -345,6 +384,10 @@
             .stat-value {
                 font-size: 28px;
             }
+
+            .stats-grid.two-columns {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -352,6 +395,7 @@
     <header class="header">
         <div class="header-logo" onclick="navigateTo('rides-list')">
             <img src="assets/logo.png" alt="AUREAVIA">
+            <span class="header-logo-text">AUREAVIA Driver</span>
         </div>
         <div class="header-right">
             <span class="header-user-name">Marco Rossi</span>
@@ -434,7 +478,9 @@
                 <div class="stat-value green">€12,850</div>
                 <div class="stat-label">Total Earnings</div>
             </div>
+        </div>
 
+        <div class="stats-grid two-columns">
             <div class="stat-card distance">
                 <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2196F3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
@@ -443,9 +489,7 @@
                 <div class="stat-value blue">7,235 km</div>
                 <div class="stat-label">Total Distance Traveled</div>
             </div>
-        </div>
 
-        <div class="stats-grid" style="margin-top: 24px;">
             <div class="stat-card rating" onclick="navigateTo('reviews')">
                 <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFC107" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
@@ -468,8 +512,12 @@
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                     </svg>
                 </div>
-                <div class="stat-label">Your Driver Rating</div>
-                <div class="rating-subtitle">87 reviews</div>
+                <div class="stat-label-wrapper">
+                    <div class="stat-label-row">
+                        <div class="stat-label">Your Driver Rating</div>
+                        <div class="rating-subtitle">• 87 reviews</div>
+                    </div>
+                </div>
             </div>
         </div>
 

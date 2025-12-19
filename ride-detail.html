@@ -41,6 +41,14 @@
             cursor: pointer;
             display: flex;
             align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo-text {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
         }
 
         .header-logo img {
@@ -142,6 +150,8 @@
 
         .content {
             padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .back-button {
@@ -522,6 +532,10 @@
                 font-size: 18px;
             }
 
+            .header-logo-text {
+                display: none;
+            }
+
             .header-user-name,
             .header-avatar {
                 display: none;
@@ -549,6 +563,7 @@
     <header class="header">
         <div class="header-logo" onclick="navigateTo('rides-list')">
             <img src="assets/logo.png" alt="AUREAVIA">
+            <span class="header-logo-text">AUREAVIA Driver</span>
         </div>
         <div class="header-right">
             <span class="header-user-name">Marco Rossi</span>
