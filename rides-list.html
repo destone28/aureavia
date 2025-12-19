@@ -175,26 +175,132 @@
         }
 
         .filters-section {
-            background: #F5F5F5;
-            padding: 20px;
+            background: #FFFFFF;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .filters-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .filters-header:hover {
+            background: #FAFAFA;
+        }
+
+        .filters-title-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
 
         .filters-title {
-            font-size: 18px;
-            font-weight: 700;
+            font-size: 16px;
+            font-weight: 600;
             color: #2D2D2D;
+        }
+
+        .filters-count {
+            background: #FF8C00;
+            color: #FFFFFF;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 12px;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .filters-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666666;
+            font-size: 14px;
+        }
+
+        .filters-toggle svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .filters-toggle.collapsed svg {
+            transform: rotate(180deg);
+        }
+
+        .filters-content {
+            padding: 0 20px 20px 20px;
+            max-height: 500px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .filters-content.collapsed {
+            max-height: 0;
+            padding: 0 20px;
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 8px;
             margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .clear-filters-btn {
+            padding: 8px 16px;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            background: #FFFFFF;
+            color: #666666;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .clear-filters-btn:hover {
+            background: #FFF5E6;
+            border-color: #FF8C00;
+            color: #FF8C00;
+        }
+
+        .clear-filters-btn svg {
+            width: 16px;
+            height: 16px;
         }
 
         .filter-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+        }
+
+        .filter-group:last-child {
+            margin-bottom: 0;
         }
 
         .filter-label {
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #2D2D2D;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-label svg {
+            width: 16px;
+            height: 16px;
             color: #666666;
-            margin-bottom: 8px;
-            display: block;
         }
 
         .filter-chips {
@@ -204,24 +310,58 @@
         }
 
         .chip {
-            border: 1px solid #E0E0E0;
-            border-radius: 20px;
-            padding: 8px 16px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 24px;
+            padding: 10px 18px;
             background: #FFFFFF;
             color: #666666;
             font-size: 14px;
+            font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chip::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 140, 0, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
         }
 
         .chip:hover {
             border-color: #FF8C00;
+            color: #FF8C00;
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(255, 140, 0, 0.15);
+        }
+
+        .chip:hover::before {
+            width: 200px;
+            height: 200px;
         }
 
         .chip.active {
-            background: #FF8C00;
+            background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
             color: #FFFFFF;
             border-color: #FF8C00;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.25);
+        }
+
+        .chip.active::before {
+            display: none;
+        }
+
+        .chip:active {
+            transform: scale(0.97);
         }
 
         .rides-container {
@@ -420,8 +560,20 @@
                 right: 10px;
             }
 
-            .filters-section {
-                padding: 16px;
+            .filters-header {
+                padding: 12px 16px;
+            }
+
+            .filters-content {
+                padding: 0 16px 16px 16px;
+            }
+
+            .filters-content.collapsed {
+                padding: 0 16px;
+            }
+
+            .filters-title {
+                font-size: 15px;
             }
 
             .filter-chips {
@@ -429,8 +581,8 @@
             }
 
             .chip {
+                padding: 8px 14px;
                 font-size: 13px;
-                padding: 6px 12px;
             }
 
             .tab {
@@ -512,31 +664,72 @@
     </nav>
 
     <section class="filters-section">
-        <h2 class="filters-title">Filter Rides</h2>
-
-        <div class="filter-group">
-            <label class="filter-label">Passengers</label>
-            <div class="filter-chips">
-                <div class="chip" data-filter="passengers" data-value="1-2" onclick="toggleFilter('passengers', '1-2')" tabindex="0" role="button">1-2</div>
-                <div class="chip" data-filter="passengers" data-value="3-4" onclick="toggleFilter('passengers', '3-4')" tabindex="0" role="button">3-4</div>
-                <div class="chip" data-filter="passengers" data-value="5+" onclick="toggleFilter('passengers', '5+')" tabindex="0" role="button">5+</div>
+        <div class="filters-header" onclick="toggleFilters()">
+            <div class="filters-title-wrapper">
+                <h2 class="filters-title">Filter Rides</h2>
+                <span class="filters-count" id="filterCount" style="display: none;">0</span>
+            </div>
+            <div class="filters-toggle" id="filtersToggle">
+                <span>Hide filters</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                </svg>
             </div>
         </div>
 
-        <div class="filter-group">
-            <label class="filter-label">Route Type</label>
-            <div class="filter-chips">
-                <div class="chip" data-filter="route" data-value="urban" onclick="toggleFilter('route', 'urban')" tabindex="0" role="button">Urban</div>
-                <div class="chip" data-filter="route" data-value="extra-urban" onclick="toggleFilter('route', 'extra-urban')" tabindex="0" role="button">Extra-urban</div>
+        <div class="filters-content" id="filtersContent">
+            <div class="filters-actions" id="filtersActions" style="display: none;">
+                <button class="clear-filters-btn" onclick="clearAllFilters()">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                    Clear all filters
+                </button>
             </div>
-        </div>
 
-        <div class="filter-group">
-            <label class="filter-label">Distance</label>
-            <div class="filter-chips">
-                <div class="chip" data-filter="distance" data-value="<20" onclick="toggleFilter('distance', '<20')" tabindex="0" role="button">&lt;20 km</div>
-                <div class="chip" data-filter="distance" data-value="20-50" onclick="toggleFilter('distance', '20-50')" tabindex="0" role="button">20-50 km</div>
-                <div class="chip" data-filter="distance" data-value=">50" onclick="toggleFilter('distance', '>50')" tabindex="0" role="button">&gt;50 km</div>
+            <div class="filter-group">
+                <label class="filter-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Passengers
+                </label>
+                <div class="filter-chips">
+                    <div class="chip" data-filter="passengers" data-value="1-2" onclick="toggleFilter('passengers', '1-2')" tabindex="0" role="button">1-2</div>
+                    <div class="chip" data-filter="passengers" data-value="3-4" onclick="toggleFilter('passengers', '3-4')" tabindex="0" role="button">3-4</div>
+                    <div class="chip" data-filter="passengers" data-value="5+" onclick="toggleFilter('passengers', '5+')" tabindex="0" role="button">5+</div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="10" r="3"></circle>
+                        <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"></path>
+                    </svg>
+                    Route Type
+                </label>
+                <div class="filter-chips">
+                    <div class="chip" data-filter="route" data-value="urban" onclick="toggleFilter('route', 'urban')" tabindex="0" role="button">Urban</div>
+                    <div class="chip" data-filter="route" data-value="extra-urban" onclick="toggleFilter('route', 'extra-urban')" tabindex="0" role="button">Extra-urban</div>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <label class="filter-label">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    Distance
+                </label>
+                <div class="filter-chips">
+                    <div class="chip" data-filter="distance" data-value="<20" onclick="toggleFilter('distance', '<20')" tabindex="0" role="button">&lt;20 km</div>
+                    <div class="chip" data-filter="distance" data-value="20-50" onclick="toggleFilter('distance', '20-50')" tabindex="0" role="button">20-50 km</div>
+                    <div class="chip" data-filter="distance" data-value=">50" onclick="toggleFilter('distance', '>50')" tabindex="0" role="button">&gt;50 km</div>
+                </div>
             </div>
         </div>
     </section>
@@ -979,7 +1172,67 @@
             if (menu) {
                 menu.classList.add('hidden');
             }
+            updateFilterCount();
         });
+
+        // Toggle filters visibility
+        function toggleFilters() {
+            const filtersContent = document.getElementById('filtersContent');
+            const filtersToggle = document.getElementById('filtersToggle');
+            const toggleText = filtersToggle.querySelector('span');
+
+            filtersContent.classList.toggle('collapsed');
+            filtersToggle.classList.toggle('collapsed');
+
+            if (filtersContent.classList.contains('collapsed')) {
+                toggleText.textContent = 'Show filters';
+            } else {
+                toggleText.textContent = 'Hide filters';
+            }
+        }
+
+        // Update filter count badge
+        function updateFilterCount() {
+            const activeFiltersCount = Object.values(activeFilters).reduce((sum, arr) => sum + arr.length, 0);
+            const filterCountBadge = document.getElementById('filterCount');
+            const filtersActions = document.getElementById('filtersActions');
+
+            if (activeFiltersCount > 0) {
+                filterCountBadge.textContent = activeFiltersCount;
+                filterCountBadge.style.display = 'block';
+                filtersActions.style.display = 'flex';
+            } else {
+                filterCountBadge.style.display = 'none';
+                filtersActions.style.display = 'none';
+            }
+        }
+
+        // Clear all filters
+        function clearAllFilters() {
+            // Clear all filter arrays
+            activeFilters.passengers = [];
+            activeFilters.route = [];
+            activeFilters.distance = [];
+
+            // Remove active class from all chips
+            const chips = document.querySelectorAll('.chip');
+            chips.forEach(chip => {
+                chip.classList.remove('active');
+            });
+
+            // Update count and apply filters
+            updateFilterCount();
+            applyFilters();
+        }
+
+        // Override toggleFilter to include count update
+        const originalToggleFilter = window.toggleFilter;
+        window.toggleFilter = function(filterType, value) {
+            if (originalToggleFilter) {
+                originalToggleFilter(filterType, value);
+            }
+            updateFilterCount();
+        };
     </script>
 </body>
 </html>
