@@ -203,6 +203,44 @@
 
         .chart-header {
             margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .chart-header-left {
+            flex: 1;
+        }
+
+        .granularity-selector {
+            display: flex;
+            gap: 4px;
+            background: #F5F5F5;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .granularity-btn {
+            padding: 6px 12px;
+            border: none;
+            background: transparent;
+            color: #666666;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .granularity-btn:hover {
+            color: #2D2D2D;
+        }
+
+        .granularity-btn.active {
+            background: #FFFFFF;
+            color: #2196F3;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         .chart-title {
@@ -222,6 +260,11 @@
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         .table-header {
@@ -741,11 +784,18 @@
 
             <div class="chart-card">
                 <div class="chart-header">
-                    <h2 class="chart-title">Earnings Over Time</h2>
-                    <p class="chart-subtitle">Monthly NCC service revenue</p>
+                    <div class="chart-header-left">
+                        <h2 class="chart-title">Earnings Over Time</h2>
+                        <p class="chart-subtitle" id="chartSubtitle">Monthly NCC service revenue</p>
+                    </div>
+                    <div class="granularity-selector">
+                        <button class="granularity-btn" onclick="changeGranularity('daily')">Giornaliero</button>
+                        <button class="granularity-btn active" onclick="changeGranularity('weekly')">Settimanale</button>
+                        <button class="granularity-btn" onclick="changeGranularity('monthly')">Mensile</button>
+                    </div>
                 </div>
                 <div style="height: 300px; position: relative;">
-                    <svg width="100%" height="300" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
+                    <svg id="earningsChart" width="100%" height="300" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
                         <!-- Y-axis labels -->
                         <text x="30" y="30" font-size="12" fill="#999" text-anchor="end">€28k</text>
                         <text x="30" y="90" font-size="12" fill="#999" text-anchor="end">€21k</text>
@@ -798,6 +848,7 @@
                 <div class="table-header">
                     <h2 class="table-title">Recent NCC Rides</h2>
                 </div>
+                <div class="table-wrapper">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -903,6 +954,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 
@@ -915,6 +967,7 @@
                         Export Data
                     </a>
                 </div>
+                <div class="table-wrapper">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -1021,6 +1074,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 
@@ -1033,6 +1087,7 @@
                         Add Driver
                     </button>
                 </div>
+                <div class="table-wrapper">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -1175,6 +1230,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
 
@@ -1187,6 +1243,7 @@
                         Add Partner
                     </button>
                 </div>
+                <div class="table-wrapper">
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -1267,6 +1324,7 @@
                         </tr>
                     </tbody>
                 </table>
+                </div>
             </div>
         </div>
     </div>
@@ -1296,6 +1354,26 @@
         </div>
     </div>
 
+    <!-- Orientation Suggestion Modal -->
+    <div id="orientationModal" class="modal-overlay">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-body" style="text-align: center; padding: 32px 24px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" style="margin-bottom: 20px;">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+                <h3 style="font-size: 20px; font-weight: 700; color: #2D2D2D; margin-bottom: 12px;">Suggerimento</h3>
+                <p style="font-size: 14px; color: #666666; line-height: 1.6; margin-bottom: 24px;">
+                    Per una migliore esperienza, ti consigliamo di ruotare il dispositivo in modalità orizzontale o di accedere tramite desktop.
+                </p>
+                <button onclick="closeOrientationModal()" style="width: 100%; padding: 12px 24px; background: #FF8C00; color: #FFFFFF; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                    Ho capito
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="js/navigation.js"></script>
     <script>
         function switchTab(tabName) {
@@ -1314,8 +1392,17 @@
             // Show selected tab content
             document.getElementById(tabName).classList.add('active');
 
-            // Add active class to clicked tab
-            event.target.closest('.tab').classList.add('active');
+            // Add active class to corresponding tab
+            const targetTab = Array.from(tabs).find(tab => {
+                const tabText = tab.textContent.trim().toLowerCase();
+                return (tabName === 'overview' && tabText.includes('overview')) ||
+                       (tabName === 'rides' && tabText.includes('ncc rides')) ||
+                       (tabName === 'drivers' && tabText.includes('drivers')) ||
+                       (tabName === 'partners' && tabText.includes('partners'));
+            });
+            if (targetTab) {
+                targetTab.classList.add('active');
+            }
         }
 
         // Driver reviews data
@@ -1413,6 +1500,140 @@
                 window.location.href = 'admin-login.html';
             }
         }
+
+        // Orientation suggestion modal
+        function closeOrientationModal() {
+            document.getElementById('orientationModal').classList.remove('active');
+            sessionStorage.setItem('orientationSuggestionShown', 'true');
+        }
+
+        // Show orientation suggestion on mobile devices (only once per session)
+        window.addEventListener('load', function() {
+            const isMobile = window.innerWidth < 768;
+            const isPortrait = window.innerHeight > window.innerWidth;
+            const suggestionShown = sessionStorage.getItem('orientationSuggestionShown');
+
+            if (isMobile && isPortrait && !suggestionShown) {
+                setTimeout(() => {
+                    document.getElementById('orientationModal').classList.add('active');
+                }, 500);
+            }
+
+            // Check URL parameter for tab switching
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabParam = urlParams.get('tab');
+            if (tabParam) {
+                switchTab(tabParam);
+            }
+        });
+
+        // Earnings chart data
+        const earningsData = {
+            daily: {
+                subtitle: 'Daily NCC service revenue (Last 14 days)',
+                labels: ['5 Dec', '6 Dec', '7 Dec', '8 Dec', '9 Dec', '10 Dec', '11 Dec', '12 Dec', '13 Dec', '14 Dec', '15 Dec', '16 Dec', '17 Dec', 'Today'],
+                values: [720, 890, 1050, 980, 1120, 1380, 1450, 680, 750, 920, 1100, 1340, 1520, 1680]
+            },
+            weekly: {
+                subtitle: 'Weekly NCC service revenue (Last 8 weeks)',
+                labels: ['W43', 'W44', 'W45', 'W46', 'W47', 'W48', 'W49', 'Current'],
+                values: [4200, 3800, 4500, 5100, 4800, 5600, 5900, 6200]
+            },
+            monthly: {
+                subtitle: 'Monthly NCC service revenue',
+                labels: ['Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Current'],
+                values: [18000, 16000, 19000, 21000, 20000, 23000, 24800, 26500]
+            }
+        };
+
+        let currentGranularity = 'weekly';
+
+        function changeGranularity(granularity) {
+            currentGranularity = granularity;
+
+            // Update button states
+            const buttons = document.querySelectorAll('.granularity-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update subtitle
+            document.getElementById('chartSubtitle').textContent = earningsData[granularity].subtitle;
+
+            // Re-render chart
+            renderEarningsChart(granularity);
+        }
+
+        function renderEarningsChart(granularity) {
+            const data = earningsData[granularity];
+            const chartSvg = document.getElementById('earningsChart');
+
+            // Calculate max value for scaling
+            const maxValue = Math.max(...data.values);
+            const yMax = Math.ceil(maxValue / 1000) * 1000;
+
+            // Generate Y-axis labels
+            const yStep = yMax / 4;
+            const yLabels = [];
+            for (let i = 0; i <= 4; i++) {
+                const value = yMax - (i * yStep);
+                if (value >= 1000) {
+                    yLabels.push(`€${(value / 1000).toFixed(0)}k`);
+                } else {
+                    yLabels.push(`€${value}`);
+                }
+            }
+
+            // Calculate positions for data points
+            const chartWidth = 710; // 760 - 50
+            const chartHeight = 240; // 270 - 30
+            const pointSpacing = chartWidth / (data.values.length - 1);
+            const points = data.values.map((value, index) => {
+                const x = 50 + (index * pointSpacing);
+                const y = 30 + (chartHeight - ((value / yMax) * chartHeight));
+                return { x, y, value };
+            });
+
+            // Generate polyline points string
+            const polylinePoints = points.map(p => `${p.x},${p.y}`).join(' ');
+
+            // Build SVG content
+            let svgContent = '';
+
+            // Y-axis labels
+            for (let i = 0; i <= 4; i++) {
+                const y = 30 + (i * 60);
+                svgContent += `<text x="30" y="${y}" font-size="12" fill="#999" text-anchor="end">${yLabels[i]}</text>`;
+            }
+
+            // Grid lines
+            for (let i = 0; i <= 4; i++) {
+                const y = 30 + (i * 60);
+                svgContent += `<line x1="50" y1="${y}" x2="760" y2="${y}" stroke="#F0F0F0" stroke-width="1"/>`;
+            }
+
+            // Data line
+            svgContent += `<polyline points="${polylinePoints}" fill="none" stroke="#2196F3" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+            // Data points
+            points.forEach(p => {
+                svgContent += `<circle cx="${p.x}" cy="${p.y}" r="5" fill="#2196F3"/>`;
+            });
+
+            // X-axis labels
+            data.labels.forEach((label, index) => {
+                const x = points[index].x;
+                svgContent += `<text x="${x}" y="290" font-size="12" fill="#999" text-anchor="middle">${label}</text>`;
+            });
+
+            chartSvg.innerHTML = svgContent;
+        }
+
+        // Initialize chart on page load
+        window.addEventListener('load', function() {
+            renderEarningsChart(currentGranularity);
+        });
     </script>
 </body>
 </html>

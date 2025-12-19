@@ -204,7 +204,7 @@
     </header>
 
     <div class="content">
-        <button class="back-button" onclick="window.location.href='admin-dashboard.html'">
+        <button class="back-button" onclick="window.location.href='admin-dashboard.html?tab=drivers'">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polyline points="15 18 9 12 15 6"></polyline>
             </svg>
@@ -277,7 +277,7 @@
                 </div>
 
                 <div class="form-actions">
-                    <button type="button" class="btn btn-secondary" onclick="window.location.href='admin-dashboard.html'">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='admin-dashboard.html?tab=drivers'">
                         Cancel
                     </button>
                     <button type="submit" class="btn btn-primary">
@@ -295,8 +295,8 @@
             // Show success message (in a real app, this would save to a database)
             alert('Driver added successfully!');
 
-            // Redirect back to admin dashboard
-            window.location.href = 'admin-dashboard.html';
+            // Redirect back to admin dashboard Drivers tab
+            window.location.href = 'admin-dashboard.html?tab=drivers';
         });
     </script>
 </body>
