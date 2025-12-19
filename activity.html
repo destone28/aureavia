@@ -140,11 +140,23 @@
             margin: 0 auto;
         }
 
-        .page-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #2D2D2D;
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
             margin-bottom: 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FFFFFF;
+            margin: 0;
+        }
+
+        .page-icon {
+            width: 32px;
+            height: 32px;
         }
 
         .stats-grid {
@@ -379,7 +391,10 @@
         </a>
         <a href="vehicle.html" class="dropdown-item">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5" />
             </svg>
             Vehicle
         </a>
@@ -394,7 +409,12 @@
     </div>
 
     <div class="content">
-        <h1 class="page-title">Your Activity</h1>
+        <div class="page-header">
+            <h1 class="page-title">Your Activity</h1>
+            <svg class="page-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+        </div>
 
         <div class="stats-grid">
             <div class="stat-card rides">

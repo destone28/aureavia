@@ -1,0 +1,16 @@
+Ride ID,Date,Time,Pickup Location,Dropoff Location,Driver,Source,Status,Revenue
+NCC-2024-045,15 Dec 2024,14:30,Milano Centrale,Malpensa Airport,Marco Rossi,Booking.com,Completed,€85
+NCC-2024-046,15 Dec 2024,16:00,Via Montenapoleone,Como Centro,Giuseppe Verdi,Elite Travel,Completed,€120
+NCC-2024-047,15 Dec 2024,18:30,Bergamo Airport,Milano Centro,Luca Ferrari,BusinessRide,Completed,€95
+NCC-2024-048,16 Dec 2024,09:00,Hotel Principe di Savoia,Linate Airport,Andrea Bianchi,Booking.com,Assigned,€65
+NCC-2024-049,16 Dec 2024,11:30,Torino Porta Nuova,Milano Centrale,Not assigned,Elite Travel,Available,€110
+NCC-2024-050,16 Dec 2024,14:30,Milano Centro,Bergamo Airport,Marco Rossi,Booking.com,Assigned,€88
+NCC-2024-051,16 Dec 2024,17:00,Linate Airport,Milano Centrale,Giuseppe Verdi,BusinessRide,Assigned,€55
+NCC-2024-052,17 Dec 2024,08:00,Milano Malpensa,Como Lakefront,Not assigned,Booking.com,Available,€135
+NCC-2024-053,17 Dec 2024,10:30,Monza Centro,Linate Airport,Luca Ferrari,Elite Travel,Completed,€72
+NCC-2024-054,17 Dec 2024,13:00,Milano Centrale,Stazione Porta Garibaldi,Andrea Bianchi,BusinessRide,Completed,€45
+NCC-2024-055,17 Dec 2024,15:30,Malpensa Airport,Como Centro,Marco Rossi,Booking.com,Completed,€145
+NCC-2024-056,17 Dec 2024,18:00,Bergamo Centro,Milano Duomo,Giuseppe Verdi,Elite Travel,Completed,€68
+NCC-2024-057,18 Dec 2024,07:30,Linate Airport,Milano Centrale,Luca Ferrari,Booking.com,Assigned,€58
+NCC-2024-058,18 Dec 2024,09:45,Via della Spiga,Malpensa Airport,Andrea Bianchi,BusinessRide,Assigned,€125
+NCC-2024-059,18 Dec 2024,12:00,Como Lakefront,Milano Centro,Not assigned,Elite Travel,Available,€95

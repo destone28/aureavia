@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREAVIA - NCC Management Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="js/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: url('assets/bg_admin.png') center center / cover no-repeat fixed;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #FFFFFF;
+            padding: 20px 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-logo img {
+            height: 40px;
+            width: auto;
+        }
+
+        .header-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .logout-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #FFFFFF;
+            border: 2px solid #FF8C00;
+            border-radius: 8px;
+            color: #FF8C00;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-button:hover {
+            background: #FF8C00;
+            color: #FFFFFF;
+        }
+
+        .logout-button svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .navigation-tabs {
+            background: #FFFFFF;
+            border-bottom: 1px solid #E0E0E0;
+            display: flex;
+            padding: 0 40px;
+        }
+
+        .tab {
+            padding: 16px 24px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #666666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            color: #FF8C00;
+            background: #FFF5E6;
+        }
+
+        .tab.active {
+            color: #FF8C00;
+            border-bottom-color: #FF8C00;
+        }
+
+        .tab svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .content {
+            padding: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Overview Tab Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-title {
+            font-size: 14px;
+            color: #666666;
+            font-weight: 500;
+        }
+
+        .stat-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon.blue {
+            background: #E3F2FD;
+        }
+
+        .stat-icon.green {
+            background: #E8F5E9;
+        }
+
+        .stat-icon.purple {
+            background: #F3E5F5;
+        }
+
+        .stat-icon.orange {
+            background: #FFF5E6;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 8px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: #4CAF50;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-change.neutral {
+            color: #666666;
+        }
+
+        .chart-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+        }
+
+        .chart-header {
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 4px;
+        }
+
+        .chart-subtitle {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .table-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .table-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: #FAFAFA;
+        }
+
+        .data-table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-bottom: 1px solid #F0F0F0;
+            font-size: 14px;
+            color: #2D2D2D;
+        }
+
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .status-badge.assigned {
+            background: #E3F2FD;
+            color: #2196F3;
+        }
+
+        .status-badge.available {
+            background: #FFF3E0;
+            color: #FF8C00;
+        }
+
+        .status-badge.active {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .status-badge.inactive {
+            background: #F5F5F5;
+            color: #999999;
+        }
+
+        .status-badge.declined,
+        .status-badge.cancelled {
+            background: #FFEBEE;
+            color: #F44336;
+        }
+
+        .route-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .route-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .route-dot.green {
+            background: #4CAF50;
+        }
+
+        .route-dot.red {
+            background: #F44336;
+        }
+
+        .route-text {
+            font-size: 13px;
+            color: #666666;
+        }
+
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .source-badge.booking {
+            background: #E3F2FD;
+            color: #2196F3;
+        }
+
+        .source-badge.elite {
+            background: #F3E5F5;
+            color: #9C27B0;
+        }
+
+        .source-badge.business {
+            background: #E0E0E0;
+            color: #424242;
+        }
+
+        .export-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .export-button:hover {
+            background: #1976D2;
+        }
+
+        .add-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #2196F3;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-button:hover {
+            background: #1976D2;
+        }
+
+        .rating-display {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rating-value {
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .star {
+            color: #FFC107;
+        }
+
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .rating-display {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .rating-display:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #FFFFFF;
+            border-radius: 16px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid #F0F0F0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2D2D2D;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #F5F5F5;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #E0E0E0;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .driver-summary {
+            text-align: center;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #F0F0F0;
+            margin-bottom: 24px;
+        }
+
+        .driver-summary-rating {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2D2D2D;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .driver-summary-rating .star {
+            font-size: 32px;
+            color: #FFC107;
+        }
+
+        .driver-summary-text {
+            font-size: 14px;
+            color: #666666;
+            margin-top: 8px;
+        }
+
+        .review-item {
+            background: #FAFAFA;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .review-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .review-item-user {
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .review-item-rating {
+            display: flex;
+            gap: 4px;
+        }
+
+        .review-item-rating .star {
+            font-size: 14px;
+            color: #FFC107;
+        }
+
+        .review-item-rating .star.empty {
+            color: #E0E0E0;
+        }
+
+        .review-item-text {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.6;
+            margin-bottom: 8px;
+        }
+
+        .review-item-date {
+            font-size: 12px;
+            color: #999999;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 16px 20px;
+            }
+
+            .navigation-tabs {
+                padding: 0 20px;
+                overflow-x: auto;
+            }
+
+            .content {
+                padding: 24px 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .data-table {
+                font-size: 12px;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-height: 90vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <div class="header-logo">
+                <img src="assets/logo.png" alt="AUREAVIA">
+            </div>
+            <h1 class="header-title">NCC Management Dashboard</h1>
+        </div>
+        <button class="logout-button" onclick="confirmLogout()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </button>
+    </header>
+
+    <nav class="navigation-tabs">
+        <div class="tab active" onclick="switchTab('overview')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Overview
+        </div>
+        <div class="tab" onclick="switchTab('rides')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5" />
+            </svg>
+            NCC Rides
+        </div>
+        <div class="tab" onclick="switchTab('drivers')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+            Drivers
+        </div>
+        <div class="tab" onclick="switchTab('partners')">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            NCC Partners
+        </div>
+    </nav>
+
+    <div class="content">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Rides (This Month)</div>
+                        <div class="stat-icon blue">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2196F3" stroke-width="2">
+                                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5" />
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">247</div>
+                    <div class="stat-change">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        +12.5% vs last month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Total Earnings</div>
+                        <div class="stat-icon green">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">€24,850</div>
+                    <div class="stat-change">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        +8.3% vs last month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Active Drivers</div>
+                        <div class="stat-icon purple">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9C27B0" stroke-width="2">
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="9" cy="7" r="4"></circle>
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">18</div>
+                    <div class="stat-change">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        +5.9% vs last month
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-title">Daily Rides This Month (Average)</div>
+                        <div class="stat-icon orange">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="stat-value">8</div>
+                    <div class="stat-change">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                            <polyline points="17 6 23 6 23 12"></polyline>
+                        </svg>
+                        +14.3% vs last month
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h2 class="chart-title">Earnings Over Time</h2>
+                    <p class="chart-subtitle">Monthly NCC service revenue</p>
+                </div>
+                <div style="height: 300px; position: relative;">
+                    <svg width="100%" height="300" viewBox="0 0 800 300" preserveAspectRatio="xMidYMid meet">
+                        <!-- Y-axis labels -->
+                        <text x="30" y="30" font-size="12" fill="#999" text-anchor="end">€28k</text>
+                        <text x="30" y="90" font-size="12" fill="#999" text-anchor="end">€21k</text>
+                        <text x="30" y="150" font-size="12" fill="#999" text-anchor="end">€14k</text>
+                        <text x="30" y="210" font-size="12" fill="#999" text-anchor="end">€7k</text>
+                        <text x="30" y="270" font-size="12" fill="#999" text-anchor="end">€0k</text>
+
+                        <!-- Grid lines -->
+                        <line x1="50" y1="30" x2="760" y2="30" stroke="#F0F0F0" stroke-width="1"/>
+                        <line x1="50" y1="90" x2="760" y2="90" stroke="#F0F0F0" stroke-width="1"/>
+                        <line x1="50" y1="150" x2="760" y2="150" stroke="#F0F0F0" stroke-width="1"/>
+                        <line x1="50" y1="210" x2="760" y2="210" stroke="#F0F0F0" stroke-width="1"/>
+                        <line x1="50" y1="270" x2="760" y2="270" stroke="#F0F0F0" stroke-width="1"/>
+
+                        <!-- Data line -->
+                        <!-- Jun: €18k, Jul: €16k, Aug: €19k, Sep: €21k, Oct: €20k, Nov: €23k, Dec: €24.8k -->
+                        <polyline
+                            points="50,120 150,144 250,108 350,84 450,96 550,54 650,42 750,30"
+                            fill="none"
+                            stroke="#2196F3"
+                            stroke-width="3"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+
+                        <!-- Data points -->
+                        <circle cx="50" cy="120" r="5" fill="#2196F3"/>
+                        <circle cx="150" cy="144" r="5" fill="#2196F3"/>
+                        <circle cx="250" cy="108" r="5" fill="#2196F3"/>
+                        <circle cx="350" cy="84" r="5" fill="#2196F3"/>
+                        <circle cx="450" cy="96" r="5" fill="#2196F3"/>
+                        <circle cx="550" cy="54" r="5" fill="#2196F3"/>
+                        <circle cx="650" cy="42" r="5" fill="#2196F3"/>
+                        <circle cx="750" cy="30" r="5" fill="#2196F3"/>
+
+                        <!-- X-axis labels -->
+                        <text x="50" y="290" font-size="12" fill="#999" text-anchor="middle">Jun</text>
+                        <text x="150" y="290" font-size="12" fill="#999" text-anchor="middle">Jul</text>
+                        <text x="250" y="290" font-size="12" fill="#999" text-anchor="middle">Aug</text>
+                        <text x="350" y="290" font-size="12" fill="#999" text-anchor="middle">Sep</text>
+                        <text x="450" y="290" font-size="12" fill="#999" text-anchor="middle">Oct</text>
+                        <text x="550" y="290" font-size="12" fill="#999" text-anchor="middle">Nov</text>
+                        <text x="650" y="290" font-size="12" fill="#999" text-anchor="middle">Dec</text>
+                        <text x="750" y="290" font-size="12" fill="#999" text-anchor="middle">Current</text>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">Recent NCC Rides</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>RIDE ID</th>
+                            <th>DATE & TIME</th>
+                            <th>ROUTE</th>
+                            <th>DRIVER</th>
+                            <th>SOURCE</th>
+                            <th>STATUS</th>
+                            <th>REVENUE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>NCC-2024-045</td>
+                            <td>15 Dec • 14:30</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Milano Centrale</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Malpensa Airport</span>
+                                </div>
+                            </td>
+                            <td>Marco Rossi</td>
+                            <td><span class="source-badge booking">Booking.com</span></td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                            <td>€85</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-046</td>
+                            <td>15 Dec • 16:00</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Via Montenapoleone</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Como Centro</span>
+                                </div>
+                            </td>
+                            <td>Giuseppe Verdi</td>
+                            <td><span class="source-badge elite">Elite Travel</span></td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                            <td>€120</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-047</td>
+                            <td>15 Dec • 18:30</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Bergamo Airport</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Milano Centro</span>
+                                </div>
+                            </td>
+                            <td>Luca Ferrari</td>
+                            <td><span class="source-badge business">BusinessRide</span></td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                            <td>€95</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-048</td>
+                            <td>16 Dec • 09:00</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Hotel Principe di Savoia</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Linate Airport</span>
+                                </div>
+                            </td>
+                            <td>Andrea Bianchi</td>
+                            <td><span class="source-badge booking">Booking.com</span></td>
+                            <td><span class="status-badge assigned">Assigned</span></td>
+                            <td>€65</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-049</td>
+                            <td>16 Dec • 11:30</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Torino Porta Nuova</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Milano Centrale</span>
+                                </div>
+                            </td>
+                            <td>Not assigned</td>
+                            <td><span class="source-badge elite">Elite Travel</span></td>
+                            <td><span class="status-badge available">Available</span></td>
+                            <td>€110</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- NCC Rides Tab -->
+        <div id="rides" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">All NCC Rides</h2>
+                    <a href="data/ncc-rides-export.csv" download="ncc-rides-export.csv" class="export-button" style="text-decoration: none;">
+                        Export Data
+                    </a>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>RIDE ID</th>
+                            <th>DATE & TIME</th>
+                            <th>ROUTE</th>
+                            <th>DRIVER</th>
+                            <th>SOURCE</th>
+                            <th>STATUS</th>
+                            <th>REVENUE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Same as overview table but with more rows -->
+                        <tr>
+                            <td>NCC-2024-045</td>
+                            <td>15 Dec • 14:30</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Milano Centrale</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Malpensa Airport</span>
+                                </div>
+                            </td>
+                            <td>Marco Rossi</td>
+                            <td><span class="source-badge booking">Booking.com</span></td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                            <td>€85</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-046</td>
+                            <td>15 Dec • 16:00</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Via Montenapoleone</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Como Centro</span>
+                                </div>
+                            </td>
+                            <td>Giuseppe Verdi</td>
+                            <td><span class="source-badge elite">Elite Travel</span></td>
+                            <td><span class="status-badge completed">Completed</span></td>
+                            <td>€120</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-050</td>
+                            <td>16 Dec • 14:30</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Milano Centro</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Bergamo Airport</span>
+                                </div>
+                            </td>
+                            <td>Marco Rossi</td>
+                            <td><span class="source-badge booking">Booking.com</span></td>
+                            <td><span class="status-badge assigned">Assigned</span></td>
+                            <td>€88</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-051</td>
+                            <td>16 Dec • 17:00</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Linate Airport</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Milano Centrale</span>
+                                </div>
+                            </td>
+                            <td>Giuseppe Verdi</td>
+                            <td><span class="source-badge business">BusinessRide</span></td>
+                            <td><span class="status-badge assigned">Assigned</span></td>
+                            <td>€55</td>
+                        </tr>
+                        <tr>
+                            <td>NCC-2024-052</td>
+                            <td>17 Dec • 08:00</td>
+                            <td>
+                                <div class="route-info">
+                                    <div class="route-dot green"></div>
+                                    <span>Milano Malpensa</span>
+                                </div>
+                                <div class="route-info">
+                                    <div class="route-dot red"></div>
+                                    <span>Como Lakefront</span>
+                                </div>
+                            </td>
+                            <td>Not assigned</td>
+                            <td><span class="source-badge booking">Booking.com</span></td>
+                            <td><span class="status-badge available">Available</span></td>
+                            <td>€135</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Drivers Tab -->
+        <div id="drivers" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">Active Drivers</h2>
+                    <button class="add-button" onclick="window.location.href='add-driver.html'">
+                        Add Driver
+                    </button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>DRIVER</th>
+                            <th>CONTACT</th>
+                            <th>VEHICLE</th>
+                            <th>BOOKING PROVIDER</th>
+                            <th>NCC COMPANY</th>
+                            <th>STATUS</th>
+                            <th>TOTAL RIDES</th>
+                            <th>TOTAL EARNINGS</th>
+                            <th>RATING</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div>Marco Rossi</div>
+                                <div style="font-size: 12px; color: #999;">DRV-001</div>
+                            </td>
+                            <td>
+                                <div>+39 348 123 4567</div>
+                                <div style="font-size: 12px; color: #999;">marco.rossi@nccservice.it</div>
+                            </td>
+                            <td>
+                                <div>Mercedes E-Class</div>
+                                <div style="font-size: 12px; color: #999;">AB 123 CD</div>
+                            </td>
+                            <td><span class="source-badge booking">Booking.com</span></td>
+                            <td>Elite Transfer Milano</td>
+                            <td><span class="status-badge cancelled">Cancelled</span></td>
+                            <td>142</td>
+                            <td>€12,850</td>
+                            <td>
+                                <div class="rating-display" onclick="showRatingModal('Marco Rossi', 4.8, 'marcoRossi')">
+                                    <span class="rating-value">4.8</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>Giuseppe Verdi</div>
+                                <div style="font-size: 12px; color: #999;">DRV-002</div>
+                            </td>
+                            <td>
+                                <div>+39 349 234 5678</div>
+                                <div style="font-size: 12px; color: #999;">giuseppe.verdi@nccservice.it</div>
+                            </td>
+                            <td>
+                                <div>BMW 5 Series</div>
+                                <div style="font-size: 12px; color: #999;">EF 456 GH</div>
+                            </td>
+                            <td><span class="source-badge elite">Elite Travel</span></td>
+                            <td>Premium Transfer Services</td>
+                            <td><span class="status-badge declined">Declined</span></td>
+                            <td>128</td>
+                            <td>€11,200</td>
+                            <td>
+                                <div class="rating-display" onclick="showRatingModal('Giuseppe Verdi', 4.9, 'giuseppeVerdi')">
+                                    <span class="rating-value">4.9</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>Luca Ferrari</div>
+                                <div style="font-size: 12px; color: #999;">DRV-003</div>
+                            </td>
+                            <td>
+                                <div>+39 347 345 6789</div>
+                                <div style="font-size: 12px; color: #999;">luca.ferrari@nccservice.it</div>
+                            </td>
+                            <td>
+                                <div>Audi A6</div>
+                                <div style="font-size: 12px; color: #999;">IJ 789 KL</div>
+                            </td>
+                            <td><span class="source-badge business">BusinessRide</span></td>
+                            <td>BusinessRide</td>
+                            <td><span class="status-badge active">Active</span></td>
+                            <td>156</td>
+                            <td>€14,320</td>
+                            <td>
+                                <div class="rating-display" onclick="showRatingModal('Luca Ferrari', 4.7, 'lucaFerrari')">
+                                    <span class="rating-value">4.7</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>Andrea Bianchi</div>
+                                <div style="font-size: 12px; color: #999;">DRV-004</div>
+                            </td>
+                            <td>
+                                <div>+39 346 456 7890</div>
+                                <div style="font-size: 12px; color: #999;">andrea.bianchi@nccservice.it</div>
+                            </td>
+                            <td>
+                                <div>Mercedes S-Class</div>
+                                <div style="font-size: 12px; color: #999;">MN 012 OP</div>
+                            </td>
+                            <td><span class="source-badge booking">Booking.com</span></td>
+                            <td>Elite Transfer Milano</td>
+                            <td><span class="status-badge active">On Ride</span></td>
+                            <td>98</td>
+                            <td>€9,840</td>
+                            <td>
+                                <div class="rating-display" onclick="showRatingModal('Andrea Bianchi', 4.6, 'andreaBianchi')">
+                                    <span class="rating-value">4.6</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div>Simone Conti</div>
+                                <div style="font-size: 12px; color: #999;">DRV-007</div>
+                            </td>
+                            <td>
+                                <div>+39 343 789 0123</div>
+                                <div style="font-size: 12px; color: #999;">simone.conti@nccservice.it</div>
+                            </td>
+                            <td>
+                                <div>Mercedes E-Class</div>
+                                <div style="font-size: 12px; color: #999;">YZ 901 AB</div>
+                            </td>
+                            <td><span class="source-badge elite">Elite Travel</span></td>
+                            <td>Premium Transfer Services</td>
+                            <td><span class="status-badge inactive">Inactive</span></td>
+                            <td>87</td>
+                            <td>€7,920</td>
+                            <td>
+                                <div class="rating-display" onclick="showRatingModal('Simone Conti', 4.4, 'simoneConti')">
+                                    <span class="rating-value">4.4</span>
+                                    <span class="star">★</span>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- NCC Partners Tab -->
+        <div id="partners" class="tab-content">
+            <div class="table-card">
+                <div class="table-header">
+                    <h2 class="table-title">NCC Partner Companies</h2>
+                    <button class="add-button" onclick="window.location.href='add-partner.html'">
+                        Add Partner
+                    </button>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>COMPANY</th>
+                            <th>TYPE</th>
+                            <th>CONTACT PERSON</th>
+                            <th>CONTACT INFO</th>
+                            <th>CONTRACTS</th>
+                            <th>TOTAL RIDES</th>
+                            <th>REVENUE</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">Booking.com</div>
+                                <div style="font-size: 12px; color: #999;">www.booking.com</div>
+                            </td>
+                            <td><span class="source-badge booking">Booking Platform</span></td>
+                            <td>Laura Bianchi</td>
+                            <td>
+                                <div>+39 02 1234 5678</div>
+                                <div style="font-size: 12px; color: #999;">partnerships@booking.com</div>
+                            </td>
+                            <td>1</td>
+                            <td>89</td>
+                            <td>€7,850</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">Elite Travel NCC</div>
+                                <div style="font-size: 12px; color: #999;">www.elitetravel.it</div>
+                            </td>
+                            <td><span class="source-badge elite">NCC Partner</span></td>
+                            <td>Giovanni Esposito</td>
+                            <td>
+                                <div>+39 02 2345 6789</div>
+                                <div style="font-size: 12px; color: #999;">info@elitetravel.it</div>
+                            </td>
+                            <td>2</td>
+                            <td>67</td>
+                            <td>€8,240</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">BusinessRide</div>
+                                <div style="font-size: 12px; color: #999;">www.businessride.it</div>
+                            </td>
+                            <td><span class="source-badge business">NCC Partner</span></td>
+                            <td>Stefano Ricci</td>
+                            <td>
+                                <div>+39 02 3456 7890</div>
+                                <div style="font-size: 12px; color: #999;">contact@businessride.it</div>
+                            </td>
+                            <td>1</td>
+                            <td>54</td>
+                            <td>€5,940</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div style="font-weight: 600;">Premium Transfer Services</div>
+                                <div style="font-size: 12px; color: #999;">www.premiumtransfer.it</div>
+                            </td>
+                            <td><span class="source-badge business">NCC Partner</span></td>
+                            <td>Angela Moretti</td>
+                            <td>
+                                <div>+39 02 4567 8901</div>
+                                <div style="font-size: 12px; color: #999;">admin@premiumtransfer.it</div>
+                            </td>
+                            <td>1</td>
+                            <td>31</td>
+                            <td>€3,820</td>
+                            <td><span class="status-badge active">Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalDriverName">Driver Reviews</h3>
+                <button class="modal-close" onclick="closeRatingModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="driver-summary">
+                    <div class="driver-summary-rating">
+                        <span id="modalRating">4.8</span>
+                        <span class="star">★</span>
+                    </div>
+                    <div class="driver-summary-text" id="modalReviewCount">Based on 10 reviews</div>
+                </div>
+                <div id="reviewsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/navigation.js"></script>
+    <script>
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+
+            // Add active class to clicked tab
+            event.target.closest('.tab').classList.add('active');
+        }
+
+        // Driver reviews data
+        const driverReviews = {
+            marcoRossi: [
+                { user: 'Giovanni Bianchi', date: '15 December 2024', rating: 5, text: 'Excellent service! Marco was very professional, the car was impeccably clean, and he arrived exactly on time. The ride was smooth and comfortable. Highly recommended for airport transfers!' },
+                { user: 'Sarah Anderson', date: '14 December 2024', rating: 5, text: 'Outstanding driver! Very courteous and helpful with luggage. Made the journey from the airport very pleasant. Will definitely book again next time I\'m in Milan.' },
+                { user: 'Luca Ferrari', date: '13 December 2024', rating: 4, text: 'Good service overall. Driver was friendly and professional. Slightly delayed pickup (about 5 minutes) but otherwise a pleasant experience.' },
+                { user: 'Maria Teresa', date: '12 December 2024', rating: 5, text: 'Perfect service for our hotel transfer. Marco was waiting for us with a sign, helped with all our bags, and drove safely. The car was luxurious and spotless. Thank you!' },
+                { user: 'Paolo Rossi', date: '11 December 2024', rating: 4, text: 'Very good driver, clean vehicle. Route could have been optimized better to avoid some traffic, but overall satisfied with the service.' },
+                { user: 'Andrea Conti', date: '10 December 2024', rating: 2, text: 'Driver was 15 minutes late for pickup. Communication could have been better - I had to call twice to confirm location. The ride itself was fine but the poor punctuality affected my schedule.' },
+                { user: 'Elena Moretti', date: '09 December 2024', rating: 5, text: 'Fantastic experience! The driver went above and beyond - helped carry my shopping bags and even recommended a great restaurant. Top-notch service!' },
+                { user: 'Franco Ricci', date: '08 December 2024', rating: 1, text: 'Very disappointing. Driver was extremely late (30+ minutes), didn\'t apologize, and was rude when I asked about the delay. Car wasn\'t clean either - found trash in the back seat. Would not recommend.' },
+                { user: 'James Smith', date: '07 December 2024', rating: 5, text: 'Brilliant service from start to finish. Professional, punctual, and the vehicle was in pristine condition. Made my business trip much easier. Five stars!' },
+                { user: 'Chiara Romano', date: '05 December 2024', rating: 2, text: 'Expected better service for the price. Driver seemed distracted during the trip, constantly on the phone. Air conditioning wasn\'t working properly either. Not satisfied.' }
+            ],
+            giuseppeVerdi: [
+                { user: 'Alessandro Bianchi', date: '18 December 2024', rating: 5, text: 'Exceptional service! Giuseppe was incredibly professional and knowledgeable about Milan. The BMW was immaculate and the ride was very comfortable.' },
+                { user: 'Maria Colombo', date: '16 December 2024', rating: 5, text: 'Outstanding! Giuseppe arrived early, helped with luggage, and provided great conversation. Highly recommend!' },
+                { user: 'Thomas Weber', date: '14 December 2024', rating: 5, text: 'Perfect transfer service. Giuseppe was punctual, courteous, and drove very safely. Will definitely use again.' },
+                { user: 'Francesca Moretti', date: '12 December 2024', rating: 4, text: 'Very good service overall. Giuseppe was polite and professional. Only minor issue was the pickup location was slightly confusing.' },
+                { user: 'Roberto Galli', date: '10 December 2024', rating: 5, text: 'Excellent driver! Giuseppe knows all the best routes to avoid traffic. Highly professional and friendly.' }
+            ],
+            lucaFerrari: [
+                { user: 'Laura Fontana', date: '17 December 2024', rating: 5, text: 'Great experience with Luca! Very professional driver, clean Audi, and smooth ride. Would recommend.' },
+                { user: 'Marco Benedetti', date: '15 December 2024', rating: 4, text: 'Good service. Luca was friendly and drove well. The car was clean but could use some updates.' },
+                { user: 'Sofia Marino', date: '13 December 2024', rating: 5, text: 'Luca was fantastic! Very accommodating and helped make our trip stress-free. Thank you!' },
+                { user: 'Giovanni Costa', date: '11 December 2024', rating: 4, text: 'Solid service. Driver was punctual and professional. No complaints.' },
+                { user: 'Elena Rizzo', date: '09 December 2024', rating: 5, text: 'Excellent! Luca was very helpful and the ride was very comfortable. Highly recommend for business trips.' },
+                { user: 'Antonio Serra', date: '07 December 2024', rating: 3, text: 'Service was okay. Driver was a bit late but otherwise fine. Car was clean.' }
+            ],
+            andreaBianchi: [
+                { user: 'Paola Greco', date: '18 December 2024', rating: 5, text: 'Andrea was wonderful! Very professional and the Mercedes was luxurious. Perfect for our special occasion.' },
+                { user: 'Stefano Ferretti', date: '16 December 2024', rating: 4, text: 'Good driver, clean car. Andrea was polite and drove safely. Would use again.' },
+                { user: 'Valentina Conti', date: '14 December 2024', rating: 5, text: 'Exceptional service! Andrea went above and beyond to ensure we were comfortable. Highly recommend!' },
+                { user: 'Matteo Lombardi', date: '12 December 2024', rating: 4, text: 'Very good service. Andrea was professional and the S-Class was in great condition.' },
+                { user: 'Giulia Romano', date: '10 December 2024', rating: 5, text: 'Perfect! Andrea was punctual, courteous, and the ride was extremely comfortable.' }
+            ],
+            simoneConti: [
+                { user: 'Luca Martini', date: '15 December 2024', rating: 4, text: 'Simone provided good service. Professional and friendly, though the pickup was slightly delayed.' },
+                { user: 'Chiara Rossi', date: '13 December 2024', rating: 5, text: 'Great experience! Simone was very helpful and the car was clean and comfortable.' },
+                { user: 'Andrea Gallo', date: '11 December 2024', rating: 4, text: 'Solid service overall. Simone was polite and drove well. No major issues.' },
+                { user: 'Francesca Villa', date: '09 December 2024', rating: 4, text: 'Good driver, clean vehicle. Service was as expected. Would use again.' },
+                { user: 'Roberto Mancini', date: '07 December 2024', rating: 5, text: 'Excellent! Simone was very professional and made our trip very pleasant.' }
+            ]
+        };
+
+        function showRatingModal(driverName, rating, driverId) {
+            const modal = document.getElementById('ratingModal');
+            const reviewsList = document.getElementById('reviewsList');
+            const reviews = driverReviews[driverId] || [];
+
+            // Update modal title and rating
+            document.getElementById('modalDriverName').textContent = driverName + ' - Reviews';
+            document.getElementById('modalRating').textContent = rating;
+            document.getElementById('modalReviewCount').textContent = `Based on ${reviews.length} reviews`;
+
+            // Generate reviews HTML
+            let reviewsHTML = '';
+            reviews.forEach(review => {
+                const stars = '★'.repeat(review.rating) + '<span class="empty">★</span>'.repeat(5 - review.rating);
+                reviewsHTML += `
+                    <div class="review-item">
+                        <div class="review-item-header">
+                            <div class="review-item-user">${review.user}</div>
+                            <div class="review-item-rating">${stars}</div>
+                        </div>
+                        <div class="review-item-text">${review.text}</div>
+                        <div class="review-item-date">${review.date}</div>
+                    </div>
+                `;
+            });
+
+            reviewsList.innerHTML = reviewsHTML;
+
+            // Show modal
+            modal.classList.add('active');
+        }
+
+        function closeRatingModal() {
+            const modal = document.getElementById('ratingModal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('ratingModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRatingModal();
+            }
+        });
+
+        // Logout confirmation
+        function confirmLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'admin-login.html';
+            }
+        }
+    </script>
+</body>
+</html>
