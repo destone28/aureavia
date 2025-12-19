@@ -458,6 +458,24 @@
             }
         }
 
+        @media (max-width: 768px) {
+            .chart-header {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .granularity-selector {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .granularity-btn {
+                flex: 1;
+                font-size: 12px;
+                padding: 8px 4px;
+            }
+        }
+
         .rating-display {
             cursor: pointer;
             transition: all 0.2s;
@@ -1122,8 +1140,8 @@
                             <td>142</td>
                             <td>€12,850</td>
                             <td>
-                                <div class="rating-display" onclick="showRatingModal('Marco Rossi', 4.8, 'marcoRossi')">
-                                    <span class="rating-value">4.8</span>
+                                <div class="rating-display" onclick="showRatingModal('Marco Rossi', 4.7, 'marcoRossi')">
+                                    <span class="rating-value">4.7</span>
                                     <span class="star">★</span>
                                 </div>
                             </td>
@@ -1412,41 +1430,40 @@
                 { user: 'Sarah Anderson', date: '14 December 2024', rating: 5, text: 'Outstanding driver! Very courteous and helpful with luggage. Made the journey from the airport very pleasant. Will definitely book again next time I\'m in Milan.' },
                 { user: 'Luca Ferrari', date: '13 December 2024', rating: 4, text: 'Good service overall. Driver was friendly and professional. Slightly delayed pickup (about 5 minutes) but otherwise a pleasant experience.' },
                 { user: 'Maria Teresa', date: '12 December 2024', rating: 5, text: 'Perfect service for our hotel transfer. Marco was waiting for us with a sign, helped with all our bags, and drove safely. The car was luxurious and spotless. Thank you!' },
-                { user: 'Paolo Rossi', date: '11 December 2024', rating: 4, text: 'Very good driver, clean vehicle. Route could have been optimized better to avoid some traffic, but overall satisfied with the service.' },
-                { user: 'Andrea Conti', date: '10 December 2024', rating: 2, text: 'Driver was 15 minutes late for pickup. Communication could have been better - I had to call twice to confirm location. The ride itself was fine but the poor punctuality affected my schedule.' },
-                { user: 'Elena Moretti', date: '09 December 2024', rating: 5, text: 'Fantastic experience! The driver went above and beyond - helped carry my shopping bags and even recommended a great restaurant. Top-notch service!' },
-                { user: 'Franco Ricci', date: '08 December 2024', rating: 1, text: 'Very disappointing. Driver was extremely late (30+ minutes), didn\'t apologize, and was rude when I asked about the delay. Car wasn\'t clean either - found trash in the back seat. Would not recommend.' },
-                { user: 'James Smith', date: '07 December 2024', rating: 5, text: 'Brilliant service from start to finish. Professional, punctual, and the vehicle was in pristine condition. Made my business trip much easier. Five stars!' },
-                { user: 'Chiara Romano', date: '05 December 2024', rating: 2, text: 'Expected better service for the price. Driver seemed distracted during the trip, constantly on the phone. Air conditioning wasn\'t working properly either. Not satisfied.' }
+                { user: 'Paolo Conti', date: '11 December 2024', rating: 5, text: 'Great driver, always on time and professional. Very smooth ride to the airport. Highly recommend!' },
+                { user: 'Jessica Williams', date: '10 December 2024', rating: 4, text: 'Professional driver and nice car. Everything went smoothly. Would book again.' },
+                { user: 'Antonio Russo', date: '09 December 2024', rating: 5, text: 'Excellent service from Marco! Punctual, courteous, and the Mercedes was in perfect condition.' }
             ],
             giuseppeVerdi: [
                 { user: 'Alessandro Bianchi', date: '18 December 2024', rating: 5, text: 'Exceptional service! Giuseppe was incredibly professional and knowledgeable about Milan. The BMW was immaculate and the ride was very comfortable.' },
                 { user: 'Maria Colombo', date: '16 December 2024', rating: 5, text: 'Outstanding! Giuseppe arrived early, helped with luggage, and provided great conversation. Highly recommend!' },
                 { user: 'Thomas Weber', date: '14 December 2024', rating: 5, text: 'Perfect transfer service. Giuseppe was punctual, courteous, and drove very safely. Will definitely use again.' },
-                { user: 'Francesca Moretti', date: '12 December 2024', rating: 4, text: 'Very good service overall. Giuseppe was polite and professional. Only minor issue was the pickup location was slightly confusing.' },
-                { user: 'Roberto Galli', date: '10 December 2024', rating: 5, text: 'Excellent driver! Giuseppe knows all the best routes to avoid traffic. Highly professional and friendly.' }
+                { user: 'Francesca Moretti', date: '12 December 2024', rating: 5, text: 'Very good service overall. Giuseppe was polite and professional. Excellent experience!' },
+                { user: 'Roberto Galli', date: '10 December 2024', rating: 4, text: 'Good driver! Giuseppe knows the routes well. Pickup was slightly delayed but otherwise great.' }
             ],
             lucaFerrari: [
                 { user: 'Laura Fontana', date: '17 December 2024', rating: 5, text: 'Great experience with Luca! Very professional driver, clean Audi, and smooth ride. Would recommend.' },
                 { user: 'Marco Benedetti', date: '15 December 2024', rating: 4, text: 'Good service. Luca was friendly and drove well. The car was clean but could use some updates.' },
                 { user: 'Sofia Marino', date: '13 December 2024', rating: 5, text: 'Luca was fantastic! Very accommodating and helped make our trip stress-free. Thank you!' },
-                { user: 'Giovanni Costa', date: '11 December 2024', rating: 4, text: 'Solid service. Driver was punctual and professional. No complaints.' },
-                { user: 'Elena Rizzo', date: '09 December 2024', rating: 5, text: 'Excellent! Luca was very helpful and the ride was very comfortable. Highly recommend for business trips.' },
+                { user: 'Giovanni Costa', date: '11 December 2024', rating: 5, text: 'Solid service. Driver was punctual and professional. Great ride!' },
+                { user: 'Elena Rizzo', date: '09 December 2024', rating: 4, text: 'Good service. Luca was helpful and the ride was comfortable. Recommended for business trips.' },
                 { user: 'Antonio Serra', date: '07 December 2024', rating: 3, text: 'Service was okay. Driver was a bit late but otherwise fine. Car was clean.' }
             ],
             andreaBianchi: [
                 { user: 'Paola Greco', date: '18 December 2024', rating: 5, text: 'Andrea was wonderful! Very professional and the Mercedes was luxurious. Perfect for our special occasion.' },
                 { user: 'Stefano Ferretti', date: '16 December 2024', rating: 4, text: 'Good driver, clean car. Andrea was polite and drove safely. Would use again.' },
                 { user: 'Valentina Conti', date: '14 December 2024', rating: 5, text: 'Exceptional service! Andrea went above and beyond to ensure we were comfortable. Highly recommend!' },
-                { user: 'Matteo Lombardi', date: '12 December 2024', rating: 4, text: 'Very good service. Andrea was professional and the S-Class was in great condition.' },
-                { user: 'Giulia Romano', date: '10 December 2024', rating: 5, text: 'Perfect! Andrea was punctual, courteous, and the ride was extremely comfortable.' }
+                { user: 'Matteo Lombardi', date: '12 December 2024', rating: 5, text: 'Very good service. Andrea was professional and the S-Class was in great condition.' },
+                { user: 'Giulia Romano', date: '10 December 2024', rating: 4, text: 'Good service! Andrea was punctual and courteous. Comfortable ride.' },
+                { user: 'Marco Neri', date: '08 December 2024', rating: 2, text: 'Driver arrived late without notice. The service was okay once we started but the delay was frustrating.' }
             ],
             simoneConti: [
                 { user: 'Luca Martini', date: '15 December 2024', rating: 4, text: 'Simone provided good service. Professional and friendly, though the pickup was slightly delayed.' },
                 { user: 'Chiara Rossi', date: '13 December 2024', rating: 5, text: 'Great experience! Simone was very helpful and the car was clean and comfortable.' },
                 { user: 'Andrea Gallo', date: '11 December 2024', rating: 4, text: 'Solid service overall. Simone was polite and drove well. No major issues.' },
-                { user: 'Francesca Villa', date: '09 December 2024', rating: 4, text: 'Good driver, clean vehicle. Service was as expected. Would use again.' },
-                { user: 'Roberto Mancini', date: '07 December 2024', rating: 5, text: 'Excellent! Simone was very professional and made our trip very pleasant.' }
+                { user: 'Francesca Villa', date: '09 December 2024', rating: 5, text: 'Good driver, clean vehicle. Service was excellent. Would use again!' },
+                { user: 'Roberto Mancini', date: '07 December 2024', rating: 3, text: 'Decent service. Simone was polite but the car wasn\'t as clean as expected. Otherwise okay.' },
+                { user: 'Laura Bianchi', date: '05 December 2024', rating: 1, text: 'Very disappointing. Driver was very late and didn\'t communicate properly. Car had issues with air conditioning. Would not recommend.' }
             ]
         };
 
@@ -1463,12 +1480,19 @@
             // Generate reviews HTML
             let reviewsHTML = '';
             reviews.forEach(review => {
-                const stars = '★'.repeat(review.rating) + '<span class="empty">★</span>'.repeat(5 - review.rating);
+                let starsHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= review.rating) {
+                        starsHTML += '<span class="star">★</span>';
+                    } else {
+                        starsHTML += '<span class="star empty">★</span>';
+                    }
+                }
                 reviewsHTML += `
                     <div class="review-item">
                         <div class="review-item-header">
                             <div class="review-item-user">${review.user}</div>
-                            <div class="review-item-rating">${stars}</div>
+                            <div class="review-item-rating">${starsHTML}</div>
                         </div>
                         <div class="review-item-text">${review.text}</div>
                         <div class="review-item-date">${review.date}</div>
@@ -1496,9 +1520,14 @@
 
         // Logout confirmation
         function confirmLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'admin-login.html';
-            }
+            showConfirmDialog(
+                'Confirm Logout',
+                'Are you sure you want to logout?',
+                function() {
+                    localStorage.clear();
+                    window.location.href = 'admin-login.html';
+                }
+            );
         }
 
         // Orientation suggestion modal
