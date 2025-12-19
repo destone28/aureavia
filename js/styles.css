@@ -1,0 +1,508 @@
+/* AUREAVIA - Global Styles & Animations */
+/* ======================================== */
+
+/* Animations */
+/* ======================================== */
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Animation Classes */
+/* ======================================== */
+
+.fade-in {
+    animation: fadeIn 300ms ease-out;
+}
+
+.slide-up {
+    animation: slideUp 300ms ease-out;
+}
+
+.scale-in {
+    animation: scaleIn 200ms ease-out;
+}
+
+.slide-in-right {
+    animation: slideInRight 300ms ease-out;
+}
+
+.fade-out {
+    animation: fadeOut 300ms ease-out;
+}
+
+/* Toast Notifications */
+/* ======================================== */
+
+#toast-container {
+    position: fixed;
+    top: 80px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+}
+
+.toast {
+    background: #FFFFFF;
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 300px;
+}
+
+.toast-success {
+    border-left: 4px solid #4CAF50;
+}
+
+.toast-error {
+    border-left: 4px solid #F44336;
+}
+
+.toast-info {
+    border-left: 4px solid #2196F3;
+}
+
+.toast-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.toast-success .toast-icon {
+    color: #4CAF50;
+}
+
+.toast-error .toast-icon {
+    color: #F44336;
+}
+
+.toast-info .toast-icon {
+    color: #2196F3;
+}
+
+.toast-message {
+    flex: 1;
+    font-size: 14px;
+    color: #2D2D2D;
+    font-weight: 600;
+}
+
+.toast-close {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #666666;
+    flex-shrink: 0;
+}
+
+.toast-close:hover {
+    color: #2D2D2D;
+}
+
+.toast-close svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Loading Spinner */
+/* ======================================== */
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-right: 8px;
+    animation: spin 1s linear infinite;
+}
+
+/* Field Errors */
+/* ======================================== */
+
+.field-error {
+    color: #F44336;
+    font-size: 12px;
+    margin-top: 4px;
+    display: block;
+}
+
+.input-container.error {
+    border-color: #F44336 !important;
+}
+
+/* Card Hover Effects */
+/* ======================================== */
+
+.ride-card,
+.stat-card,
+.capacity-card,
+.activity-item {
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.ride-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.activity-item:hover {
+    transform: translateX(4px);
+}
+
+/* Focus States */
+/* ======================================== */
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+.tab:focus-visible,
+.chip:focus-visible {
+    outline: 2px solid #FF8C00;
+    outline-offset: 2px;
+}
+
+/* Mobile Menu */
+/* ======================================== */
+
+.mobile-menu-btn {
+    display: none;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.mobile-menu-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    transition: opacity 300ms ease;
+}
+
+.mobile-menu-backdrop.active {
+    display: block;
+    opacity: 1;
+}
+
+.mobile-menu-panel {
+    position: fixed;
+    top: 0;
+    right: -300px;
+    width: 300px;
+    height: 100%;
+    background: #FFFFFF;
+    z-index: 1000;
+    transition: right 300ms ease;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+.mobile-menu-panel.active {
+    right: 0;
+}
+
+.mobile-menu-header {
+    padding: 20px;
+    border-bottom: 1px solid #F0F0F0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.mobile-menu-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2D2D2D;
+}
+
+.mobile-menu-close {
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #666666;
+}
+
+.mobile-menu-items {
+    flex: 1;
+    padding: 20px 0;
+}
+
+.mobile-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+    color: #2D2D2D;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.mobile-menu-item:hover {
+    background: #F5F5F5;
+}
+
+.mobile-menu-item.active {
+    background: #FFF5E6;
+    color: #FF8C00;
+}
+
+.mobile-menu-item.logout {
+    color: #F44336;
+    border-top: 1px solid #F0F0F0;
+}
+
+.mobile-menu-item svg {
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .header-user-name {
+        display: none;
+    }
+
+    #toast-container {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .toast {
+        min-width: auto;
+    }
+}
+
+/* Skeleton Loading */
+/* ======================================== */
+
+.skeleton {
+    background: linear-gradient(90deg, #F0F0F0 25%, #E0E0E0 50%, #F0F0F0 75%);
+    background-size: 200% 100%;
+    animation: skeleton-loading 1.5s ease-in-out infinite;
+    border-radius: 8px;
+}
+
+@keyframes skeleton-loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+.skeleton-card {
+    height: 200px;
+    margin-bottom: 16px;
+}
+
+.skeleton-text {
+    height: 16px;
+    margin-bottom: 8px;
+}
+
+.skeleton-title {
+    height: 24px;
+    width: 60%;
+    margin-bottom: 12px;
+}
+
+/* Accessibility */
+/* ======================================== */
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Confirmation Dialog */
+/* ======================================== */
+
+.confirm-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.confirm-dialog {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.confirm-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #2D2D2D;
+    margin-bottom: 12px;
+}
+
+.confirm-message {
+    font-size: 16px;
+    color: #666666;
+    line-height: 1.5;
+    margin-bottom: 24px;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.confirm-btn {
+    flex: 1;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.confirm-btn-cancel {
+    background: #F5F5F5;
+    color: #666666;
+}
+
+.confirm-btn-cancel:hover {
+    background: #E0E0E0;
+}
+
+.confirm-btn-confirm {
+    background: #FF8C00;
+    color: #FFFFFF;
+}
+
+.confirm-btn-confirm:hover {
+    background: #E67E00;
+}
+
+/* Print Styles */
+/* ======================================== */
+
+@media print {
+    .header,
+    .navigation-tabs,
+    .filters-section,
+    .actions-bottom,
+    .dropdown-menu,
+    .mobile-menu-btn,
+    #toast-container,
+    .confirm-overlay {
+        display: none !important;
+    }
+
+    body {
+        padding-top: 0;
+    }
+
+    .ride-card,
+    .main-info-card,
+    .documents-card {
+        box-shadow: none;
+        border: 1px solid #E0E0E0;
+    }
+}

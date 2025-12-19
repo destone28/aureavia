@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREAVIA - Driver Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="js/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: url('assets/bg_user.png') center center / cover no-repeat fixed;
+            padding-top: 64px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #FF8C00;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-logo {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-user-name {
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF8C00;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .menu-hamburger {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-hamburger svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 64px;
+            right: 20px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 200px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.hidden {
+            display: none;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #2D2D2D;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        .dropdown-item.active {
+            background: #FFF5E6;
+        }
+
+        .dropdown-item.logout {
+            color: #FF5252;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .dropdown-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 20px;
+        }
+
+        .profile-picture-section {
+            text-align: center;
+        }
+
+        .avatar-container {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #F0F0F0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF8C00;
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #FF8C00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .camera-overlay svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .change-picture-link {
+            color: #FF8C00;
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .change-picture-link:hover {
+            text-decoration: underline;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            color: #666666;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px;
+            background: #FAFAFA;
+            color: #2D2D2D;
+            font-size: 16px;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .form-input:disabled {
+            cursor: not-allowed;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #FFF5E6 0%, #FFFFFF 100%);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-card.earnings {
+            background: linear-gradient(135deg, #E8F5E9 0%, #FFFFFF 100%);
+        }
+
+        .stat-card.distance {
+            background: linear-gradient(135deg, #E3F2FD 0%, #FFFFFF 100%);
+        }
+
+        .stat-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 12px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 8px;
+        }
+
+        .stat-value.green {
+            color: #4CAF50;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            padding: 16px;
+            border-bottom: 1px solid #F0F0F0;
+            transition: background 0.2s;
+            cursor: pointer;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: #FAFAFA;
+        }
+
+        .activity-date {
+            font-size: 12px;
+            color: #666666;
+            margin-bottom: 4px;
+        }
+
+        .activity-route {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D2D2D;
+            margin-bottom: 8px;
+        }
+
+        .activity-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .activity-distance {
+            color: #666666;
+        }
+
+        .activity-price {
+            color: #4CAF50;
+            font-weight: 600;
+        }
+
+        .security-button {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            background: #FFFFFF;
+            color: #2D2D2D;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .security-button:hover {
+            border-color: #FF8C00;
+            background: #FFF5E6;
+        }
+
+        .security-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .security-subtitle {
+            font-size: 13px;
+            color: #666666;
+            margin-top: -4px;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                font-size: 18px;
+            }
+
+            .header-user-name {
+                display: none;
+            }
+
+            .dropdown-menu {
+                right: 10px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo" onclick="navigateTo('rides-list')">
+            <img src="assets/logo.png" alt="AUREAVIA">
+        </div>
+        <div class="header-right">
+            <span class="header-user-name">Marco Rossi</span>
+            <div class="header-avatar">M</div>
+            <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="dropdown-menu hidden" id="dropdownMenu">
+        <a href="rides-list.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Rides List
+        </a>
+        <a href="profile.html" class="dropdown-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Your Profile
+        </a>
+        <a href="activity.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Your Activity
+        </a>
+        <a href="vehicle.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+            </svg>
+            Vehicle
+        </a>
+        <div class="dropdown-item logout" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="section profile-picture-section">
+            <div class="avatar-container">
+                <div class="profile-avatar">M</div>
+                <div class="camera-overlay">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                        <circle cx="12" cy="13" r="4"></circle>
+                    </svg>
+                </div>
+            </div>
+            <div>
+                <a href="#" class="change-picture-link">Change profile picture</a>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Personal Information</h2>
+            <div class="form-group">
+                <label class="form-label">FIRST NAME</label>
+                <input type="text" class="form-input" value="Marco" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">LAST NAME</label>
+                <input type="text" class="form-input" value="Rossi" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">NCC COMPANY</label>
+                <input type="text" class="form-input" value="Elite Travel NCC Milano" disabled>
+            </div>
+            <div class="form-group">
+                <label class="form-label">REFERENCE EMAIL</label>
+                <input type="email" class="form-input" value="marco.rossi@elitetravel.it" disabled>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2 class="section-title">Security</h2>
+            <button class="security-button" onclick="changePassword()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg>
+                Change Password
+            </button>
+            <div class="security-subtitle">Update your login password</div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="js/navigation.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        // Ensure menu is hidden on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menu = document.getElementById('dropdownMenu');
+            if (menu) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

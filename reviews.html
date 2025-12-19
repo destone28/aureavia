@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREAVIA - Reviews & Ratings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="js/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: url('assets/bg_user.png') center center / cover no-repeat fixed;
+            padding-top: 64px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #FF8C00;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-logo {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-user-name {
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF8C00;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .menu-hamburger {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-hamburger svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 64px;
+            right: 20px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 200px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.hidden {
+            display: none;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #2D2D2D;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        .dropdown-item.active {
+            background: #FFF5E6;
+        }
+
+        .dropdown-item.logout {
+            color: #FF5252;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .dropdown-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+        }
+
+        .dropdown-item.logout svg {
+            stroke: #FF5252;
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: none;
+            color: #666666;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-bottom: 16px;
+            transition: color 0.2s;
+        }
+
+        .back-button:hover {
+            color: #FF8C00;
+        }
+
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 24px;
+        }
+
+        .rating-summary {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .summary-top {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            margin-bottom: 20px;
+        }
+
+        .summary-score {
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #FF8C00;
+            line-height: 1;
+        }
+
+        .summary-stars {
+            display: flex;
+            gap: 4px;
+            margin: 8px 0;
+            justify-content: center;
+        }
+
+        .star {
+            width: 24px;
+            height: 24px;
+        }
+
+        .star.filled {
+            fill: #FFC107;
+            stroke: #FFC107;
+        }
+
+        .star.half {
+            fill: url(#half);
+            stroke: #FFC107;
+        }
+
+        .star.empty {
+            fill: none;
+            stroke: #E0E0E0;
+        }
+
+        .summary-count {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .summary-breakdown {
+            flex: 1;
+        }
+
+        .breakdown-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .breakdown-label {
+            font-size: 14px;
+            color: #666666;
+            width: 60px;
+        }
+
+        .breakdown-bar {
+            flex: 1;
+            height: 8px;
+            background: #F0F0F0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .breakdown-fill {
+            height: 100%;
+            background: #FFC107;
+            border-radius: 4px;
+        }
+
+        .breakdown-count {
+            font-size: 14px;
+            color: #666666;
+            width: 30px;
+            text-align: right;
+        }
+
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .review-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .review-card.negative {
+            border-left: 4px solid #FF5252;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .review-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .review-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #FF8C00 0%, #FFA500 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .review-info {
+            flex: 1;
+        }
+
+        .review-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D2D2D;
+            margin-bottom: 4px;
+        }
+
+        .review-date {
+            font-size: 13px;
+            color: #666666;
+        }
+
+        .review-rating {
+            display: flex;
+            gap: 4px;
+        }
+
+        .review-rating .star {
+            width: 16px;
+            height: 16px;
+        }
+
+        .review-text {
+            font-size: 15px;
+            color: #2D2D2D;
+            line-height: 1.6;
+            margin-top: 12px;
+        }
+
+        .review-route {
+            font-size: 13px;
+            color: #666666;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                font-size: 18px;
+            }
+
+            .header-user-name {
+                display: none;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .summary-top {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .summary-breakdown {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo" onclick="navigateTo('rides-list')">
+            <img src="assets/logo.png" alt="AUREAVIA">
+        </div>
+        <div class="header-right">
+            <span class="header-user-name">Marco Rossi</span>
+            <div class="header-avatar">M</div>
+            <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="dropdown-menu hidden" id="dropdownMenu">
+        <a href="rides-list.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Rides List
+        </a>
+        <a href="profile.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Your Profile
+        </a>
+        <a href="activity.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Your Activity
+        </a>
+        <a href="vehicle.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+            </svg>
+            Vehicle
+        </a>
+        <div class="dropdown-item logout" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </div>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="goBack()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Activities
+        </button>
+
+        <h1 class="page-title">Reviews & Ratings</h1>
+
+        <!-- Rating Summary -->
+        <div class="rating-summary">
+            <div class="summary-top">
+                <div class="summary-score">
+                    <div class="summary-number">4.7</div>
+                    <div class="summary-stars">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <svg class="star half" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2">
+                            <defs>
+                                <linearGradient id="half">
+                                    <stop offset="50%" stop-color="#FFC107"/>
+                                    <stop offset="50%" stop-color="transparent"/>
+                                </linearGradient>
+                            </defs>
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                    </div>
+                    <div class="summary-count">87 reviews</div>
+                </div>
+
+                <div class="summary-breakdown">
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">5 stars</span>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 72%;"></div>
+                        </div>
+                        <span class="breakdown-count">63</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">4 stars</span>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 18%;"></div>
+                        </div>
+                        <span class="breakdown-count">16</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">3 stars</span>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 5%;"></div>
+                        </div>
+                        <span class="breakdown-count">4</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">2 stars</span>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 3%;"></div>
+                        </div>
+                        <span class="breakdown-count">3</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="breakdown-label">1 star</span>
+                        <div class="breakdown-bar">
+                            <div class="breakdown-fill" style="width: 1%;"></div>
+                        </div>
+                        <span class="breakdown-count">1</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews List -->
+        <div class="reviews-list">
+            <!-- 5 Star Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">GB</div>
+                        <div class="review-info">
+                            <div class="review-name">Giovanni Bianchi</div>
+                            <div class="review-date">15 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Excellent service! Marco was very professional, the car was impeccably clean, and he arrived exactly on time. The ride was smooth and comfortable. Highly recommended for airport transfers!
+                </div>
+                <div class="review-route">Milano Porta Garibaldi → Torino Porta Nuova</div>
+            </div>
+
+            <!-- 5 Star Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">SA</div>
+                        <div class="review-info">
+                            <div class="review-name">Sarah Anderson</div>
+                            <div class="review-date">14 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Outstanding driver! Very courteous and helpful with luggage. Made the journey from the airport very pleasant. Will definitely book again next time I'm in Milan.
+                </div>
+                <div class="review-route">Bergamo Airport → Milano Centro</div>
+            </div>
+
+            <!-- 4 Star Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">LF</div>
+                        <div class="review-info">
+                            <div class="review-name">Luca Ferrari</div>
+                            <div class="review-date">13 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Good service overall. Driver was friendly and professional. Slightly delayed pickup (about 5 minutes) but otherwise a pleasant experience.
+                </div>
+                <div class="review-route">Via Montenapoleone → Como Centro</div>
+            </div>
+
+            <!-- 5 Star Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">MT</div>
+                        <div class="review-info">
+                            <div class="review-name">Maria Teresa</div>
+                            <div class="review-date">12 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Perfect service for our hotel transfer. Marco was waiting for us with a sign, helped with all our bags, and drove safely. The car was luxurious and spotless. Thank you!
+                </div>
+                <div class="review-route">Hotel Principe di Savoia → Linate Airport</div>
+            </div>
+
+            <!-- 4 Star Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">PR</div>
+                        <div class="review-info">
+                            <div class="review-name">Paolo Rossi</div>
+                            <div class="review-date">11 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Very good driver, clean vehicle. Route could have been optimized better to avoid some traffic, but overall satisfied with the service.
+                </div>
+                <div class="review-route">Milano Centrale → Malpensa Airport</div>
+            </div>
+
+            <!-- 2 Star Review - Negative -->
+            <div class="review-card negative">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">AC</div>
+                        <div class="review-info">
+                            <div class="review-name">Andrea Conti</div>
+                            <div class="review-date">10 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Driver was 15 minutes late for pickup. Communication could have been better - I had to call twice to confirm location. The ride itself was fine but the poor punctuality affected my schedule.
+                </div>
+                <div class="review-route">Como Centro → Milano Malpensa</div>
+            </div>
+
+            <!-- 5 Star Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">EM</div>
+                        <div class="review-info">
+                            <div class="review-name">Elena Moretti</div>
+                            <div class="review-date">09 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Fantastic experience! The driver went above and beyond - helped carry my shopping bags and even recommended a great restaurant. Top-notch service!
+                </div>
+                <div class="review-route">Montenapoleone → Milano Centro</div>
+            </div>
+
+            <!-- 1 Star Review - Very Negative -->
+            <div class="review-card negative">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">FR</div>
+                        <div class="review-info">
+                            <div class="review-name">Franco Ricci</div>
+                            <div class="review-date">08 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Very disappointing. Driver was extremely late (30+ minutes), didn't apologize, and was rude when I asked about the delay. Car wasn't clean either - found trash in the back seat. Would not recommend.
+                </div>
+                <div class="review-route">Linate Airport → Milano Centro</div>
+            </div>
+
+            <!-- 5 Star Review -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">JS</div>
+                        <div class="review-info">
+                            <div class="review-name">James Smith</div>
+                            <div class="review-date">07 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Brilliant service from start to finish. Professional, punctual, and the vehicle was in pristine condition. Made my business trip much easier. Five stars!
+                </div>
+                <div class="review-route">Malpensa Airport → Milano Centro</div>
+            </div>
+
+            <!-- 2 Star Review - Negative -->
+            <div class="review-card negative">
+                <div class="review-header">
+                    <div class="review-user">
+                        <div class="review-avatar">CR</div>
+                        <div class="review-info">
+                            <div class="review-name">Chiara Romano</div>
+                            <div class="review-date">05 December 2024</div>
+                        </div>
+                    </div>
+                    <div class="review-rating">
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+                <div class="review-text">
+                    Expected better service for the price. Driver seemed distracted during the trip, constantly on the phone. Air conditioning wasn't working properly either. Not satisfied.
+                </div>
+                <div class="review-route">Bergamo → Milano Centro</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="js/navigation.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        // Ensure menu is hidden on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menu = document.getElementById('dropdownMenu');
+            if (menu) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

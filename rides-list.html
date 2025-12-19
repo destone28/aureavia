@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREAVIA - Rides Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="js/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: url('assets/bg_user.png') center center / cover no-repeat fixed;
+            padding-top: 120px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #FF8C00;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-logo {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-user-name {
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF8C00;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .menu-hamburger {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-hamburger svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 64px;
+            right: 20px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 200px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.hidden {
+            display: none;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #2D2D2D;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        .dropdown-item.active {
+            background: #FFF5E6;
+        }
+
+        .dropdown-item.logout {
+            color: #FF5252;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .dropdown-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+        }
+
+        .dropdown-item.logout svg {
+            stroke: #FF5252;
+        }
+
+        .navigation-tabs {
+            position: fixed;
+            top: 64px;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: #FFFFFF;
+            display: flex;
+            z-index: 99;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666666;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            padding: 0 24px;
+        }
+
+        .tab:hover {
+            background: #FFF5E6;
+        }
+
+        .tab.active {
+            color: #FF8C00;
+            border-bottom-color: #FF8C00;
+        }
+
+        .filters-section {
+            background: #F5F5F5;
+            padding: 20px;
+        }
+
+        .filters-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 16px;
+        }
+
+        .filter-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            border: 1px solid #E0E0E0;
+            border-radius: 20px;
+            padding: 8px 16px;
+            background: #FFFFFF;
+            color: #666666;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .chip:hover {
+            border-color: #FF8C00;
+        }
+
+        .chip.active {
+            background: #FF8C00;
+            color: #FFFFFF;
+            border-color: #FF8C00;
+        }
+
+        .rides-container {
+            padding: 20px;
+        }
+
+        .ride-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: all 0.2s;
+        }
+
+        .ride-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .ride-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .badge-available {
+            background: #FFF3E0;
+            color: #FF8C00;
+        }
+
+        .badge-assigned {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .badge-source {
+            background: #003580;
+            color: #FFFFFF;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+        }
+
+        .badge-source.ncc-partner {
+            background: #424242;
+        }
+
+        .ride-datetime {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            align-items: center;
+        }
+
+        .datetime-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .datetime-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .ride-route {
+            margin-top: 16px;
+        }
+
+        .route-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .route-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .route-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-top: 6px;
+            flex-shrink: 0;
+        }
+
+        .route-dot.green {
+            background: #4CAF50;
+        }
+
+        .route-dot.red {
+            background: #F44336;
+        }
+
+        .route-location {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .ride-info {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .info-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #F5F5F5;
+            border-radius: 16px;
+            font-size: 13px;
+            color: #666666;
+        }
+
+        .info-badge svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .ride-footer {
+            margin-top: 16px;
+            border-top: 1px solid #F0F0F0;
+            padding-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .ride-distance {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .ride-distance svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .ride-price-section {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .ride-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #FF8C00;
+        }
+
+        .ride-details-link {
+            color: #FF8C00;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .ride-details-link:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                font-size: 18px;
+            }
+
+            .header-user-name,
+            .header-avatar {
+                display: none;
+            }
+
+            .dropdown-menu {
+                right: 10px;
+            }
+
+            .filters-section {
+                padding: 16px;
+            }
+
+            .filter-chips {
+                gap: 6px;
+            }
+
+            .chip {
+                font-size: 13px;
+                padding: 6px 12px;
+            }
+
+            .tab {
+                font-size: 14px;
+                padding: 0 16px;
+            }
+
+            .ride-card {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo" onclick="navigateTo('rides-list')">
+            <img src="assets/logo.png" alt="AUREAVIA">
+        </div>
+        <div class="header-right">
+            <span class="header-user-name">Marco Rossi</span>
+            <div class="header-avatar">M</div>
+            <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu hidden" id="dropdownMenu">
+        <a href="rides-list.html" class="dropdown-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Rides List
+        </a>
+        <a href="profile.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Your Profile
+        </a>
+        <a href="activity.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Your Activity
+        </a>
+        <a href="vehicle.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+            </svg>
+            Vehicle
+        </a>
+        <div class="dropdown-item logout" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </div>
+    </div>
+
+    <nav class="navigation-tabs">
+        <div class="tab active" data-filter="all" onclick="setActiveTab('all')" tabindex="0" role="tab">All Rides</div>
+        <div class="tab" data-filter="available" onclick="setActiveTab('available')" tabindex="0" role="tab">Available</div>
+        <div class="tab" data-filter="assigned" onclick="setActiveTab('assigned')" tabindex="0" role="tab">Assigned</div>
+    </nav>
+
+    <section class="filters-section">
+        <h2 class="filters-title">Filter Rides</h2>
+
+        <div class="filter-group">
+            <label class="filter-label">Passengers</label>
+            <div class="filter-chips">
+                <div class="chip" data-filter="passengers" data-value="1-2" onclick="toggleFilter('passengers', '1-2')" tabindex="0" role="button">1-2</div>
+                <div class="chip" data-filter="passengers" data-value="3-4" onclick="toggleFilter('passengers', '3-4')" tabindex="0" role="button">3-4</div>
+                <div class="chip" data-filter="passengers" data-value="5+" onclick="toggleFilter('passengers', '5+')" tabindex="0" role="button">5+</div>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Route Type</label>
+            <div class="filter-chips">
+                <div class="chip" data-filter="route" data-value="urban" onclick="toggleFilter('route', 'urban')" tabindex="0" role="button">Urban</div>
+                <div class="chip" data-filter="route" data-value="extra-urban" onclick="toggleFilter('route', 'extra-urban')" tabindex="0" role="button">Extra-urban</div>
+            </div>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">Distance</label>
+            <div class="filter-chips">
+                <div class="chip" data-filter="distance" data-value="<20" onclick="toggleFilter('distance', '<20')" tabindex="0" role="button">&lt;20 km</div>
+                <div class="chip" data-filter="distance" data-value="20-50" onclick="toggleFilter('distance', '20-50')" tabindex="0" role="button">20-50 km</div>
+                <div class="chip" data-filter="distance" data-value=">50" onclick="toggleFilter('distance', '>50')" tabindex="0" role="button">&gt;50 km</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="rides-container" id="ridesContainer">
+        <!-- Ride 1 -->
+        <div class="ride-card" data-status="available" data-id="1" data-passengers="1" data-route="extra-urban">
+            <div class="ride-header">
+                <span class="badge badge-available">Available</span>
+                <span class="badge-source">Booking.com</span>
+            </div>
+            <div class="ride-datetime">
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>16 Dec</span>
+                </div>
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>14:30</span>
+                </div>
+            </div>
+            <div class="ride-route">
+                <div class="route-item">
+                    <div class="route-dot green"></div>
+                    <div class="route-location">Milano Centrale Station</div>
+                </div>
+                <div class="route-item">
+                    <div class="route-dot red"></div>
+                    <div class="route-location">Milano Malpensa Airport</div>
+                </div>
+            </div>
+            <div class="ride-info">
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>1 passenger</span>
+                </div>
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <span>Extra-urban</span>
+                </div>
+            </div>
+            <div class="ride-footer">
+                <div class="ride-distance">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                    </svg>
+                    <span>52 km</span>
+                </div>
+                <div class="ride-price-section">
+                    <span class="ride-price">€85</span>
+                    <a href="#" class="ride-details-link" onclick="viewRideDetails(event, 1)">View Details &gt;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ride 2 -->
+        <div class="ride-card" data-status="available" data-id="2" data-passengers="2" data-route="extra-urban">
+            <div class="ride-header">
+                <span class="badge badge-available">Available</span>
+                <span class="badge-source">Booking.com</span>
+            </div>
+            <div class="ride-datetime">
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>16 Dec</span>
+                </div>
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>18:00</span>
+                </div>
+            </div>
+            <div class="ride-route">
+                <div class="route-item">
+                    <div class="route-dot green"></div>
+                    <div class="route-location">Via Montenapoleone 12</div>
+                </div>
+                <div class="route-item">
+                    <div class="route-dot red"></div>
+                    <div class="route-location">Como City Center</div>
+                </div>
+            </div>
+            <div class="ride-info">
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>2 passengers</span>
+                </div>
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <span>Extra-urban</span>
+                </div>
+            </div>
+            <div class="ride-footer">
+                <div class="ride-distance">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                    </svg>
+                    <span>68 km</span>
+                </div>
+                <div class="ride-price-section">
+                    <span class="ride-price">€120</span>
+                    <a href="#" class="ride-details-link" onclick="viewRideDetails(event, 2)">View Details &gt;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ride 3 -->
+        <div class="ride-card" data-status="assigned" data-id="3" data-passengers="1" data-route="urban">
+            <div class="ride-header">
+                <span class="badge badge-assigned">Assigned</span>
+                <span class="badge-source">Booking.com</span>
+            </div>
+            <div class="ride-datetime">
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>17 Dec</span>
+                </div>
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>09:00</span>
+                </div>
+            </div>
+            <div class="ride-route">
+                <div class="route-item">
+                    <div class="route-dot green"></div>
+                    <div class="route-location">Hotel Principe di Savoia</div>
+                </div>
+                <div class="route-item">
+                    <div class="route-dot red"></div>
+                    <div class="route-location">Linate Airport</div>
+                </div>
+            </div>
+            <div class="ride-info">
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>1 passenger</span>
+                </div>
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+                    </svg>
+                    <span>Urban</span>
+                </div>
+            </div>
+            <div class="ride-footer">
+                <div class="ride-distance">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                    </svg>
+                    <span>15 km</span>
+                </div>
+                <div class="ride-price-section">
+                    <span class="ride-price">€65</span>
+                    <a href="#" class="ride-details-link" onclick="viewRideDetails(event, 3)">View Details &gt;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ride 4 -->
+        <div class="ride-card" data-status="assigned" data-id="4" data-passengers="3" data-route="extra-urban">
+            <div class="ride-header">
+                <span class="badge badge-assigned">Assigned</span>
+                <span class="badge-source ncc-partner">NCC Partner BusinessRide</span>
+            </div>
+            <div class="ride-datetime">
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>17 Dec</span>
+                </div>
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>16:30</span>
+                </div>
+            </div>
+            <div class="ride-route">
+                <div class="route-item">
+                    <div class="route-dot green"></div>
+                    <div class="route-location">Bergamo Airport</div>
+                </div>
+                <div class="route-item">
+                    <div class="route-dot red"></div>
+                    <div class="route-location">Milano Centro</div>
+                </div>
+            </div>
+            <div class="ride-info">
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>3 passengers</span>
+                </div>
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <span>Extra-urban</span>
+                </div>
+            </div>
+            <div class="ride-footer">
+                <div class="ride-distance">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                    </svg>
+                    <span>58 km</span>
+                </div>
+                <div class="ride-price-section">
+                    <span class="ride-price">€95</span>
+                    <a href="#" class="ride-details-link" onclick="viewRideDetails(event, 4)">View Details &gt;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ride 5 -->
+        <div class="ride-card" data-status="available" data-id="5" data-passengers="2" data-route="extra-urban">
+            <div class="ride-header">
+                <span class="badge badge-available">Available</span>
+                <span class="badge-source">Booking.com</span>
+            </div>
+            <div class="ride-datetime">
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>18 Dec</span>
+                </div>
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>11:00</span>
+                </div>
+            </div>
+            <div class="ride-route">
+                <div class="route-item">
+                    <div class="route-dot green"></div>
+                    <div class="route-location">Milano Porta Garibaldi</div>
+                </div>
+                <div class="route-item">
+                    <div class="route-dot red"></div>
+                    <div class="route-location">Torino Porta Nuova</div>
+                </div>
+            </div>
+            <div class="ride-info">
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>2 passengers</span>
+                </div>
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <span>Extra-urban</span>
+                </div>
+            </div>
+            <div class="ride-footer">
+                <div class="ride-distance">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                    </svg>
+                    <span>145 km</span>
+                </div>
+                <div class="ride-price-section">
+                    <span class="ride-price">€180</span>
+                    <a href="#" class="ride-details-link" onclick="viewRideDetails(event, 5)">View Details &gt;</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ride 6 -->
+        <div class="ride-card" data-status="available" data-id="6" data-passengers="4" data-route="extra-urban">
+            <div class="ride-header">
+                <span class="badge badge-available">Available</span>
+                <span class="badge-source ncc-partner">NCC Partner Elite Travel</span>
+            </div>
+            <div class="ride-datetime">
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="16" y1="2" x2="16" y2="6"></line>
+                        <line x1="8" y1="2" x2="8" y2="6"></line>
+                        <line x1="3" y1="10" x2="21" y2="10"></line>
+                    </svg>
+                    <span>18 Dec</span>
+                </div>
+                <div class="datetime-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span>14:00</span>
+                </div>
+            </div>
+            <div class="ride-route">
+                <div class="route-item">
+                    <div class="route-dot green"></div>
+                    <div class="route-location">Como Centro</div>
+                </div>
+                <div class="route-item">
+                    <div class="route-dot red"></div>
+                    <div class="route-location">Milano Malpensa</div>
+                </div>
+            </div>
+            <div class="ride-info">
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>4 passengers</span>
+                </div>
+                <div class="info-badge">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                    <span>Extra-urban</span>
+                </div>
+            </div>
+            <div class="ride-footer">
+                <div class="ride-distance">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                    </svg>
+                    <span>78 km</span>
+                </div>
+                <div class="ride-price-section">
+                    <span class="ride-price">€130</span>
+                    <a href="#" class="ride-details-link" onclick="viewRideDetails(event, 6)">View Details &gt;</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu-backdrop" id="mobileMenuBackdrop" onclick="closeMobileMenu()"></div>
+    <div class="mobile-menu-panel" id="mobileMenuPanel">
+        <div class="mobile-menu-header">
+            <div class="mobile-menu-title">Menu</div>
+            <button class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Close menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-menu-items">
+            <a href="profile.html" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                Your Profile
+            </a>
+            <a href="activity.html" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                </svg>
+                Your Activity
+            </a>
+            <a href="vehicle.html" class="mobile-menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+                </svg>
+                Vehicle
+            </a>
+            <div class="mobile-menu-item logout" onclick="logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                Logout
+            </div>
+        </div>
+    </div>
+
+    <script src="js/navigation.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        // Ensure menu is hidden on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menu = document.getElementById('dropdownMenu');
+            if (menu) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

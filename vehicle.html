@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREAVIA - Vehicle Information</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="js/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: url('assets/bg_user.png') center center / cover no-repeat fixed;
+            padding-top: 64px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #FF8C00;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-logo {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-user-name {
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF8C00;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .menu-hamburger {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-hamburger svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 64px;
+            right: 20px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 200px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.hidden {
+            display: none;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #2D2D2D;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        .dropdown-item.active {
+            background: #FFF5E6;
+        }
+
+        .dropdown-item.logout {
+            color: #FF5252;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .dropdown-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 24px;
+        }
+
+        .vehicle-icon-container {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .vehicle-icon {
+            width: 200px;
+            height: 120px;
+            margin: 0 auto;
+        }
+
+        .main-info-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        .info-section {
+            margin-bottom: 24px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666666;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .license-plate-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .license-plate-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .license-plate-badge {
+            flex: 1;
+            background: #F5F5F5;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 16px 24px;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 4px;
+            text-align: center;
+            color: #2D2D2D;
+        }
+
+        .vehicle-type-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .vehicle-type-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .vehicle-type-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .vehicle-details {
+            font-size: 16px;
+            color: #666666;
+            margin-top: 4px;
+            margin-left: 36px;
+        }
+
+        .fuel-type-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .fuel-type-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .fuel-type-text {
+            font-size: 18px;
+            color: #2D2D2D;
+        }
+
+        .ncc-banner {
+            margin-top: 24px;
+            background: #E3F2FD;
+            border-left: 4px solid #2196F3;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .ncc-banner-icon {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+        }
+
+        .ncc-banner-content {
+            flex: 1;
+        }
+
+        .ncc-banner-title {
+            font-weight: 600;
+            color: #1976D2;
+            margin-bottom: 4px;
+        }
+
+        .ncc-banner-text {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.5;
+        }
+
+        .capacity-grid {
+            margin-top: 32px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .capacity-card {
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .capacity-card.passengers {
+            background: #FFF5E6;
+        }
+
+        .capacity-card.luggage {
+            background: #F0F9FF;
+        }
+
+        .capacity-label {
+            font-size: 12px;
+            color: #666666;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .capacity-icon {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto 8px;
+        }
+
+        .capacity-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2D2D2D;
+        }
+
+        .documents-card {
+            background: #FFFFFF;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .documents-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 16px;
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #F0F0F0;
+        }
+
+        .document-item:last-child {
+            border-bottom: none;
+        }
+
+        .document-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .document-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .document-text {
+            font-size: 16px;
+            color: #2D2D2D;
+        }
+
+        .document-badge {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        .document-badge.valid {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .document-badge.active {
+            background: #FFF3E0;
+            color: #FF8C00;
+        }
+
+        .edit-button-container {
+            margin-top: 32px;
+            text-align: center;
+        }
+
+        .edit-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 32px;
+            border: 2px solid #FF8C00;
+            border-radius: 12px;
+            background: #FFFFFF;
+            color: #FF8C00;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Open Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .edit-button:hover {
+            background: #FFF5E6;
+        }
+
+        .edit-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                font-size: 18px;
+            }
+
+            .header-user-name {
+                display: none;
+            }
+
+            .dropdown-menu {
+                right: 10px;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .main-info-card {
+                padding: 20px;
+            }
+
+            .vehicle-icon {
+                width: 150px;
+                height: 90px;
+            }
+
+            .capacity-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .license-plate-badge {
+                font-size: 20px;
+                padding: 12px 16px;
+                letter-spacing: 2px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo" onclick="navigateTo('rides-list')">
+            <img src="assets/logo.png" alt="AUREAVIA">
+        </div>
+        <div class="header-right">
+            <span class="header-user-name">Marco Rossi</span>
+            <div class="header-avatar">M</div>
+            <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="dropdown-menu hidden" id="dropdownMenu">
+        <a href="rides-list.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Rides List
+        </a>
+        <a href="profile.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Your Profile
+        </a>
+        <a href="activity.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Your Activity
+        </a>
+        <a href="vehicle.html" class="dropdown-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+            </svg>
+            Vehicle
+        </a>
+        <div class="dropdown-item logout" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </div>
+    </div>
+
+    <div class="content">
+        <h1 class="page-title">Vehicle Information</h1>
+
+        <div class="vehicle-icon-container">
+            <svg class="vehicle-icon" xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                <path d="M7 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M17 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+                <path d="M5 17h-2v-6l2 -5h9l4 5h1a2 2 0 0 1 2 2v4h-2m-4 0h-6m-6 -6h15m-6 0v-5" />
+            </svg>
+        </div>
+
+        <div class="main-info-card">
+            <div class="info-section">
+                <div class="info-label">License Plate</div>
+                <div class="license-plate-container">
+                    <svg class="license-plate-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                        <line x1="1" y1="10" x2="23" y2="10"></line>
+                    </svg>
+                    <div class="license-plate-badge">AB 123 CD</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-label">Vehicle Type</div>
+                <div class="vehicle-type-row">
+                    <svg class="vehicle-type-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+                    </svg>
+                    <span class="vehicle-type-name">Mercedes E-Class</span>
+                </div>
+                <div class="vehicle-details">Sedan • Black • 2022</div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-label">Fuel Type</div>
+                <div class="fuel-type-row">
+                    <svg class="fuel-type-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="3" y1="22" x2="15" y2="22"></line>
+                        <line x1="4" y1="9" x2="14" y2="9"></line>
+                        <path d="M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18"></path>
+                        <path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2h0a2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"></path>
+                    </svg>
+                    <span class="fuel-type-text">Diesel</span>
+                </div>
+            </div>
+
+            <div class="ncc-banner">
+                <svg class="ncc-banner-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2196F3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <div class="ncc-banner-content">
+                    <div class="ncc-banner-title">NCC Service Vehicle</div>
+                    <div class="ncc-banner-text">This vehicle is registered for NCC services and complies with all regulatory requirements.</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="capacity-grid">
+            <div class="capacity-card passengers">
+                <div class="capacity-label">Capacity</div>
+                <svg class="capacity-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                </svg>
+                <div class="capacity-value">4 passengers</div>
+            </div>
+
+            <div class="capacity-card luggage">
+                <div class="capacity-label">Luggage</div>
+                <svg class="capacity-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                <div class="capacity-value">3 bags</div>
+            </div>
+        </div>
+
+        <div class="documents-card">
+            <h2 class="documents-title">Documents & Registration</h2>
+
+            <div class="document-item">
+                <div class="document-left">
+                    <svg class="document-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        <polyline points="9 12 11 14 15 10"></polyline>
+                    </svg>
+                    <span class="document-text">Insurance Valid Until: 31/12/2025</span>
+                </div>
+                <span class="document-badge valid">Valid</span>
+            </div>
+
+            <div class="document-item">
+                <div class="document-left">
+                    <svg class="document-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 11l3 3L22 4"></path>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+                    </svg>
+                    <span class="document-text">Technical Inspection: 15/06/2025</span>
+                </div>
+                <span class="document-badge valid">Valid</span>
+            </div>
+
+            <div class="document-item">
+                <div class="document-left">
+                    <svg class="document-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="7"></circle>
+                        <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                    </svg>
+                    <span class="document-text">NCC License: Active</span>
+                </div>
+                <span class="document-badge active">Active</span>
+            </div>
+        </div>
+
+        <div class="edit-button-container">
+            <button class="edit-button" onclick="editVehicle()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit Vehicle Information
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="js/navigation.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        // Ensure menu is hidden on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menu = document.getElementById('dropdownMenu');
+            if (menu) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

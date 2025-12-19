@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREAVIA - Ride Details</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="js/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: url('assets/bg_user.png') center center / cover no-repeat fixed;
+            padding-top: 64px;
+            padding-bottom: 120px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #FF8C00;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-logo {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-user-name {
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF8C00;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .menu-hamburger {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-hamburger svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 64px;
+            right: 20px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 200px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.hidden {
+            display: none;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #2D2D2D;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        .dropdown-item.active {
+            background: #FFF5E6;
+        }
+
+        .dropdown-item.logout {
+            color: #FF5252;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .dropdown-item svg {
+            width: 20px;
+            height: 20px;
+            stroke: currentColor;
+        }
+
+        .dropdown-item.logout svg {
+            stroke: #FF5252;
+        }
+
+        .content {
+            padding: 20px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: transparent;
+            border: none;
+            color: #666666;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 8px 0;
+            margin-bottom: 16px;
+            transition: color 0.2s;
+        }
+
+        .back-button:hover {
+            color: #FF8C00;
+        }
+
+        .back-button svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .ride-id-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .ride-id-label {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 4px;
+        }
+
+        .ride-id-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+        }
+
+        .badge {
+            background: #FFF3E0;
+            color: #FF8C00;
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .badge-assigned {
+            background: #E8F5E9;
+            color: #4CAF50;
+        }
+
+        .info-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-icon {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .info-text {
+            font-size: 16px;
+            color: #2D2D2D;
+        }
+
+        .route-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+        }
+
+        .route-section {
+            margin-bottom: 20px;
+        }
+
+        .route-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .route-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .route-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .route-dot.green {
+            background: #4CAF50;
+        }
+
+        .route-dot.red {
+            background: #F44336;
+        }
+
+        .route-label {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .route-location {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2D2D2D;
+            margin-left: 24px;
+        }
+
+        .route-line {
+            width: 2px;
+            height: 24px;
+            background: #E0E0E0;
+            margin-left: 5px;
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .special-notes {
+            background: #FFFBF0;
+            border-left: 4px solid #FFC107;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .special-notes-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .special-notes-title {
+            font-weight: 700;
+            color: #2D2D2D;
+        }
+
+        .special-notes-text {
+            font-size: 14px;
+            color: #666666;
+            line-height: 1.5;
+        }
+
+        .earnings-card {
+            background: #F0F9FF;
+            border-left: 4px solid #FF8C00;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .earnings-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .earnings-label {
+            font-size: 16px;
+            color: #2D2D2D;
+        }
+
+        .earnings-amount {
+            font-size: 28px;
+            font-weight: 700;
+            color: #FF8C00;
+        }
+
+        .actions-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #FFFFFF;
+            padding: 20px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: 'Open Sans', sans-serif;
+        }
+
+        .btn-decline {
+            background: #FFFFFF;
+            border: 2px solid #E0E0E0;
+            color: #666666;
+        }
+
+        .btn-decline:hover {
+            border-color: #CCCCCC;
+        }
+
+        .btn-accept {
+            background: #FF8C00;
+            color: #FFFFFF;
+        }
+
+        .btn-accept:hover {
+            background: #E67E00;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .modal-checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #4CAF50;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0);
+            }
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-top: 24px;
+        }
+
+        .modal-subtitle {
+            font-size: 16px;
+            color: #666666;
+            margin-top: 8px;
+        }
+
+        .modal-recap {
+            background: #F5F5F5;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 24px;
+            text-align: left;
+        }
+
+        .modal-recap-item {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 8px;
+        }
+
+        .modal-recap-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .modal-recap-item strong {
+            color: #2D2D2D;
+        }
+
+        .modal-btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-family: 'Open Sans', sans-serif;
+            margin-top: 12px;
+        }
+
+        .modal-btn-primary {
+            background: #FF8C00;
+            color: #FFFFFF;
+            margin-top: 24px;
+        }
+
+        .modal-btn-primary:hover {
+            background: #E67E00;
+        }
+
+        .modal-btn-outline {
+            background: #FFFFFF;
+            border: 2px solid #E0E0E0;
+            color: #666666;
+        }
+
+        .modal-btn-outline:hover {
+            border-color: #CCCCCC;
+        }
+
+        .modal-btn-text {
+            background: transparent;
+            color: #666666;
+            margin-top: 16px;
+        }
+
+        .modal-btn-text:hover {
+            color: #FF8C00;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                font-size: 18px;
+            }
+
+            .header-user-name,
+            .header-avatar {
+                display: none;
+            }
+
+            .dropdown-menu {
+                right: 10px;
+            }
+
+            .actions-bottom {
+                flex-direction: column;
+            }
+
+            .modal {
+                padding: 24px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo" onclick="navigateTo('rides-list')">
+            <img src="assets/logo.png" alt="AUREAVIA">
+        </div>
+        <div class="header-right">
+            <span class="header-user-name">Marco Rossi</span>
+            <div class="header-avatar">M</div>
+            <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="dropdown-menu hidden" id="dropdownMenu">
+        <a href="rides-list.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Rides List
+        </a>
+        <a href="profile.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Your Profile
+        </a>
+        <a href="activity.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Your Activity
+        </a>
+        <a href="vehicle.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+            </svg>
+            Vehicle
+        </a>
+        <div class="dropdown-item logout" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </div>
+    </div>
+
+    <div class="content">
+        <button class="back-button" onclick="goBack()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Back to Rides
+        </button>
+        <div class="ride-id-section">
+            <div>
+                <div class="ride-id-label">Ride ID</div>
+                <div class="ride-id-value" id="rideIdValue">NCC-2024-002</div>
+            </div>
+            <span class="badge" id="statusBadge">Available</span>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="16" y1="2" x2="16" y2="6"></line>
+                    <line x1="8" y1="2" x2="8" y2="6"></line>
+                    <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                <span class="info-text" id="rideDate">16 December 2024</span>
+                <svg class="info-icon" style="margin-left: 12px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+                <span class="info-text" id="rideTime">14:30</span>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                <span class="info-text" id="passengerName">John Anderson</span>
+            </div>
+        </div>
+
+        <div class="route-card">
+            <div class="route-section">
+                <div class="route-header">
+                    <div class="route-dot green"></div>
+                    <span class="route-label">Pickup Location</span>
+                </div>
+                <div class="route-location" id="pickupLocation">Milano Centrale Station</div>
+            </div>
+            <div class="route-line"></div>
+            <div class="route-section">
+                <div class="route-header">
+                    <div class="route-dot red"></div>
+                    <span class="route-label">Drop-off Location</span>
+                </div>
+                <div class="route-location" id="dropoffLocation">Milano Malpensa Airport</div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-grid">
+                <div class="info-row">
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
+                    </svg>
+                    <span class="info-text" id="rideDistance">52 km</span>
+                </div>
+                <div class="info-row">
+                    <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                    <span class="info-text" id="rideDuration">45 min</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-card">
+            <div class="info-row">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                    <polyline points="14 2 14 8 20 8"></polyline>
+                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                    <polyline points="10 9 9 9 8 9"></polyline>
+                </svg>
+                <span class="info-text" id="bookingSource">Booking.com</span>
+            </div>
+        </div>
+
+        <div class="special-notes">
+            <div class="special-notes-header">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFC107" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span class="special-notes-title">Special Notes</span>
+            </div>
+            <p class="special-notes-text" id="specialNotes">Client requests assistance with luggage</p>
+        </div>
+
+        <div class="earnings-card">
+            <div class="earnings-left">
+                <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <span class="earnings-label">Estimated Earnings</span>
+            </div>
+            <span class="earnings-amount" id="rideEarnings">€85</span>
+        </div>
+    </div>
+
+    <div class="actions-bottom">
+        <button class="btn btn-decline" onclick="declineRide()">Decline</button>
+        <button class="btn btn-accept" onclick="acceptRide()">Accept Ride</button>
+    </div>
+
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal">
+            <div class="modal-checkmark">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+            </div>
+            <h2 class="modal-title">Ride Accepted</h2>
+            <p class="modal-subtitle">You are now assigned to this NCC ride</p>
+            <div class="modal-recap">
+                <div class="modal-recap-item"><strong>Date:</strong> <span id="modalDate">16 December 2024</span></div>
+                <div class="modal-recap-item"><strong>Pickup:</strong> <span id="modalPickup">Milano Centrale Station</span></div>
+                <div class="modal-recap-item"><strong>Drop-off:</strong> <span id="modalDropoff">Milano Malpensa Airport</span></div>
+            </div>
+            <button class="modal-btn modal-btn-primary" onclick="navigateToPickup()">Navigate to Pickup</button>
+            <button class="modal-btn modal-btn-outline" onclick="callPassenger()">Call</button>
+            <button class="modal-btn modal-btn-text" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Check login status
+        if (!localStorage.getItem('aureavia_logged')) {
+            window.location.href = 'index.html';
+        }
+
+        // Ride data
+        const ridesData = {
+            '1': {
+                id: 'NCC-2024-001',
+                status: 'Available',
+                date: '16 December 2024',
+                time: '14:30',
+                passenger: 'John Anderson',
+                pickup: 'Milano Centrale Station',
+                dropoff: 'Milano Malpensa Airport',
+                distance: '52 km',
+                duration: '45 min',
+                source: 'Booking.com',
+                notes: 'Client requests assistance with luggage',
+                earnings: '€85'
+            },
+            '2': {
+                id: 'NCC-2024-002',
+                status: 'Available',
+                date: '16 December 2024',
+                time: '18:00',
+                passenger: 'Maria Bianchi',
+                pickup: 'Via Montenapoleone 12',
+                dropoff: 'Como City Center',
+                distance: '68 km',
+                duration: '55 min',
+                source: 'Booking.com',
+                notes: 'VIP client, premium service required',
+                earnings: '€120'
+            },
+            '3': {
+                id: 'NCC-2024-003',
+                status: 'Assigned',
+                date: '17 December 2024',
+                time: '09:00',
+                passenger: 'Robert Smith',
+                pickup: 'Hotel Principe di Savoia',
+                dropoff: 'Linate Airport',
+                distance: '15 km',
+                duration: '25 min',
+                source: 'Booking.com',
+                notes: 'Early morning pickup, client prefers quiet ride',
+                earnings: '€65'
+            },
+            '4': {
+                id: 'NCC-2024-004',
+                status: 'Assigned',
+                date: '17 December 2024',
+                time: '16:30',
+                passenger: 'Giuseppe Verdi',
+                pickup: 'Bergamo Airport',
+                dropoff: 'Milano Centro',
+                distance: '58 km',
+                duration: '50 min',
+                source: 'NCC Partner BusinessRide',
+                notes: 'Business client with multiple bags',
+                earnings: '€95'
+            },
+            '5': {
+                id: 'NCC-2024-005',
+                status: 'Available',
+                date: '18 December 2024',
+                time: '11:00',
+                passenger: 'Laura Ferrari',
+                pickup: 'Milano Porta Garibaldi',
+                dropoff: 'Torino Porta Nuova',
+                distance: '145 km',
+                duration: '120 min',
+                source: 'Booking.com',
+                notes: 'Long distance trip, highway tolls included',
+                earnings: '€180'
+            },
+            '6': {
+                id: 'NCC-2024-006',
+                status: 'Available',
+                date: '18 December 2024',
+                time: '14:00',
+                passenger: 'Antonio Colombo',
+                pickup: 'Como Centro',
+                dropoff: 'Milano Malpensa',
+                distance: '78 km',
+                duration: '65 min',
+                source: 'NCC Partner Elite Travel',
+                notes: 'Client traveling with family',
+                earnings: '€130'
+            }
+        };
+
+        // Get ride ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const rideId = urlParams.get('id') || '1';
+        const ride = ridesData[rideId] || ridesData['1'];
+
+        // Populate ride details
+        document.getElementById('rideIdValue').textContent = ride.id;
+        document.getElementById('statusBadge').textContent = ride.status;
+        if (ride.status === 'Assigned') {
+            document.getElementById('statusBadge').classList.add('badge-assigned');
+        }
+        document.getElementById('rideDate').textContent = ride.date;
+        document.getElementById('rideTime').textContent = ride.time;
+        document.getElementById('passengerName').textContent = ride.passenger;
+        document.getElementById('pickupLocation').textContent = ride.pickup;
+        document.getElementById('dropoffLocation').textContent = ride.dropoff;
+        document.getElementById('rideDistance').textContent = ride.distance;
+        document.getElementById('rideDuration').textContent = ride.duration;
+        document.getElementById('bookingSource').textContent = ride.source;
+        document.getElementById('specialNotes').textContent = ride.notes;
+        document.getElementById('rideEarnings').textContent = ride.earnings;
+
+        // Modal data
+        document.getElementById('modalDate').textContent = ride.date;
+        document.getElementById('modalPickup').textContent = ride.pickup;
+        document.getElementById('modalDropoff').textContent = ride.dropoff;
+    </script>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="js/navigation.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        // Ensure menu is hidden on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menu = document.getElementById('dropdownMenu');
+            if (menu) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

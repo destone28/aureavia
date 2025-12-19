@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AUREAVIA - Your Activity</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="js/styles.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: url('assets/bg_user.png') center center / cover no-repeat fixed;
+            padding-top: 64px;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 64px;
+            background: #FF8C00;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
+
+        .header-logo {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-user-name {
+            color: #FFFFFF;
+            font-size: 14px;
+        }
+
+        .header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF8C00;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .menu-hamburger {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .menu-hamburger svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 64px;
+            right: 20px;
+            background: #FFFFFF;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 200px;
+            overflow: hidden;
+            z-index: 1000;
+        }
+
+        .dropdown-menu.hidden {
+            display: none;
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            color: #2D2D2D;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .dropdown-item:hover {
+            background: #F5F5F5;
+        }
+
+        .dropdown-item.active {
+            background: #FFF5E6;
+        }
+
+        .dropdown-item.logout {
+            color: #FF5252;
+            border-top: 1px solid #F0F0F0;
+        }
+
+        .dropdown-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 24px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card.rides {
+            border-left: 4px solid #FF8C00;
+        }
+
+        .stat-card.earnings {
+            border-left: 4px solid #4CAF50;
+        }
+
+        .stat-card.distance {
+            border-left: 4px solid #2196F3;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 8px;
+        }
+
+        .stat-value.green {
+            color: #4CAF50;
+        }
+
+        .stat-value.blue {
+            color: #2196F3;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .activities-section {
+            background: #FFFFFF;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 20px;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            padding: 16px;
+            border-bottom: 1px solid #F0F0F0;
+            transition: background 0.2s;
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: #FAFAFA;
+        }
+
+        .activity-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .activity-date {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #666666;
+        }
+
+        .activity-route {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2D2D2D;
+            margin-bottom: 8px;
+        }
+
+        .activity-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-distance {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .activity-price {
+            font-size: 16px;
+            font-weight: 600;
+            color: #4CAF50;
+        }
+
+        .stat-card.rating {
+            border-left: 4px solid #FFC107;
+            cursor: pointer;
+        }
+
+        .stat-card.rating:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.2);
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin: 8px 0;
+        }
+
+        .star {
+            width: 20px;
+            height: 20px;
+        }
+
+        .star.filled {
+            fill: #FFC107;
+            stroke: #FFC107;
+        }
+
+        .star.empty {
+            fill: none;
+            stroke: #E0E0E0;
+        }
+
+        .rating-subtitle {
+            font-size: 12px;
+            color: #666666;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                font-size: 18px;
+            }
+
+            .header-user-name {
+                display: none;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .stat-value {
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-logo" onclick="navigateTo('rides-list')">
+            <img src="assets/logo.png" alt="AUREAVIA">
+        </div>
+        <div class="header-right">
+            <span class="header-user-name">Marco Rossi</span>
+            <div class="header-avatar">M</div>
+            <button class="menu-hamburger" onclick="toggleMenu()" aria-label="Menu">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="dropdown-menu hidden" id="dropdownMenu">
+        <a href="rides-list.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            Rides List
+        </a>
+        <a href="profile.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            Your Profile
+        </a>
+        <a href="activity.html" class="dropdown-item active">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+            </svg>
+            Your Activity
+        </a>
+        <a href="vehicle.html" class="dropdown-item">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 17h14v2H5v-2zm-1-4l2-6h12l2 6v4H4v-4zm3-4l-1 3h12l-1-3H7z"/>
+            </svg>
+            Vehicle
+        </a>
+        <div class="dropdown-item logout" onclick="logout()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            Logout
+        </div>
+    </div>
+
+    <div class="content">
+        <h1 class="page-title">Your Activity</h1>
+
+        <div class="stats-grid">
+            <div class="stat-card rides">
+                <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FF8C00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                    <polyline points="17 6 23 6 23 12"></polyline>
+                </svg>
+                <div class="stat-value">142</div>
+                <div class="stat-label">Total Rides Completed</div>
+            </div>
+
+            <div class="stat-card earnings">
+                <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+                <div class="stat-value green">€12,850</div>
+                <div class="stat-label">Total Earnings</div>
+            </div>
+
+            <div class="stat-card distance">
+                <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#2196F3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <div class="stat-value blue">7,235 km</div>
+                <div class="stat-label">Total Distance Traveled</div>
+            </div>
+        </div>
+
+        <div class="stats-grid" style="margin-top: 24px;">
+            <div class="stat-card rating" onclick="navigateTo('reviews')">
+                <svg class="stat-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#FFC107" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                </svg>
+                <div class="stat-value" style="color: #FFC107;">4.7</div>
+                <div class="rating-stars">
+                    <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <svg class="star filled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                    <svg class="star empty" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </div>
+                <div class="stat-label">Your Driver Rating</div>
+                <div class="rating-subtitle">87 reviews</div>
+            </div>
+        </div>
+
+        <div class="activities-section">
+            <h2 class="section-title">Recent Activities</h2>
+            <ul class="activity-list">
+                <li class="activity-item">
+                    <div class="activity-header">
+                        <span class="activity-date">15 Dec 2024</span>
+                        <span>•</span>
+                        <span class="activity-time">11:00</span>
+                    </div>
+                    <div class="activity-route">Milano Porta Garibaldi → Torino Porta Nuova</div>
+                    <div class="activity-footer">
+                        <span class="activity-distance">145 km</span>
+                        <span class="activity-price">€180</span>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-header">
+                        <span class="activity-date">14 Dec 2024</span>
+                        <span>•</span>
+                        <span class="activity-time">16:30</span>
+                    </div>
+                    <div class="activity-route">Bergamo Airport → Milano Centro</div>
+                    <div class="activity-footer">
+                        <span class="activity-distance">58 km</span>
+                        <span class="activity-price">€95</span>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-header">
+                        <span class="activity-date">14 Dec 2024</span>
+                        <span>•</span>
+                        <span class="activity-time">09:15</span>
+                    </div>
+                    <div class="activity-route">Hotel Principe di Savoia → Linate Airport</div>
+                    <div class="activity-footer">
+                        <span class="activity-distance">15 km</span>
+                        <span class="activity-price">€65</span>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-header">
+                        <span class="activity-date">13 Dec 2024</span>
+                        <span>•</span>
+                        <span class="activity-time">18:00</span>
+                    </div>
+                    <div class="activity-route">Via Montenapoleone → Como Centro</div>
+                    <div class="activity-footer">
+                        <span class="activity-distance">68 km</span>
+                        <span class="activity-price">€120</span>
+                    </div>
+                </li>
+                <li class="activity-item">
+                    <div class="activity-header">
+                        <span class="activity-date">13 Dec 2024</span>
+                        <span>•</span>
+                        <span class="activity-time">14:30</span>
+                    </div>
+                    <div class="activity-route">Milano Centrale → Malpensa Airport</div>
+                    <div class="activity-footer">
+                        <span class="activity-distance">52 km</span>
+                        <span class="activity-price">€85</span>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+
+    <script src="js/navigation.js"></script>
+    <script>
+        // Check authentication
+        checkAuth();
+
+        // Ensure menu is hidden on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const menu = document.getElementById('dropdownMenu');
+            if (menu) {
+                menu.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
