@@ -364,10 +364,12 @@
             left: 0;
             right: 0;
             background: #FFFFFF;
-            padding: 20px;
             box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
             display: flex;
             gap: 12px;
+            max-width: 800px;
+            margin: 0 auto;
         }
 
         .btn {
@@ -399,6 +401,68 @@
 
         .btn-accept:hover {
             background: #E67E00;
+        }
+
+        .assigned-message {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #E3F2FD;
+            border-top: 4px solid #2196F3;
+            padding: 20px;
+            box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .assigned-message-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2D2D2D;
+            margin-bottom: 8px;
+        }
+
+        .assigned-message-text {
+            font-size: 14px;
+            color: #666666;
+        }
+
+        .map-button-wrapper {
+            margin-bottom: 12px;
+        }
+
+        .map-button {
+            background: #FFFFFF;
+            border: 2px solid #FF8C00;
+            border-radius: 12px;
+            padding: 16px;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .map-button:hover {
+            background: #FFF5E6;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 140, 0, 0.2);
+        }
+
+        .map-button svg {
+            width: 24px;
+            height: 24px;
+            stroke: #FF8C00;
+        }
+
+        .map-button-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #FF8C00;
         }
 
         .modal-overlay {
@@ -546,7 +610,12 @@
             }
 
             .actions-bottom {
+                padding: 16px;
                 flex-direction: column;
+            }
+
+            .assigned-message {
+                padding: 20px 16px;
             }
 
             .modal {
@@ -699,6 +768,17 @@
             </div>
         </div>
 
+        <div class="map-button-wrapper" id="mapButtonWrapper" style="display: none;">
+            <div class="map-button" onclick="navigateToPickup()">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+                    <line x1="8" y1="2" x2="8" y2="18"></line>
+                    <line x1="16" y1="6" x2="16" y2="22"></line>
+                </svg>
+                <span class="map-button-text">Show Pickup Location on Map</span>
+            </div>
+        </div>
+
         <div class="info-card">
             <div class="info-row">
                 <svg class="info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#666666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -736,7 +816,12 @@
         </div>
     </div>
 
-    <div class="actions-bottom">
+    <div class="assigned-message" id="assignedMessage" style="display: none;">
+        <div class="assigned-message-title">Ride Already Assigned</div>
+        <div class="assigned-message-text">This ride has already been assigned to a driver and is no longer available.</div>
+    </div>
+
+    <div class="actions-bottom" id="actionsBottom">
         <button class="btn btn-decline" onclick="declineRide()">Decline</button>
         <button class="btn btn-accept" onclick="acceptRide()">Accept Ride</button>
     </div>
@@ -876,6 +961,19 @@
         document.getElementById('bookingSource').textContent = ride.source;
         document.getElementById('specialNotes').textContent = ride.notes;
         document.getElementById('rideEarnings').textContent = ride.earnings;
+
+        // Show/hide elements based on status
+        if (ride.status === 'Assigned') {
+            // Hide action buttons, show assigned message
+            document.getElementById('actionsBottom').style.display = 'none';
+            document.getElementById('assignedMessage').style.display = 'block';
+            document.getElementById('mapButtonWrapper').style.display = 'none';
+        } else if (ride.status === 'Available') {
+            // Show action buttons and map button, hide assigned message
+            document.getElementById('actionsBottom').style.display = 'flex';
+            document.getElementById('assignedMessage').style.display = 'none';
+            document.getElementById('mapButtonWrapper').style.display = 'block';
+        }
 
         // Modal data
         document.getElementById('modalDate').textContent = ride.date;
