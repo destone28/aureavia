@@ -474,12 +474,12 @@ Fonts: Google Fonts (Open Sans)
 
 ---
 
-**Last Updated**: December 2024
+**Last Updated**: December 2025
 **Version**: 2.0.0
 
 ### Version History
 
-**v2.0.0** (December 2024)
+**v2.0.0** (December 2025)
 - Added complete admin dashboard with analytics
 - Implemented driver and partner management
 - Created dynamic earnings chart with granularity options
@@ -489,7 +489,7 @@ Fonts: Google Fonts (Open Sans)
 - Created orientation suggestions for mobile admin
 - Unified logout system across interfaces
 
-**v1.0.0** (December 2024)
+**v1.0.0** (December 2025)
 - Initial driver interface release
 - Rides management and filtering
 - Driver profile and vehicle pages
