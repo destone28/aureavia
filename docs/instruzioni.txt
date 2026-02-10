@@ -1,0 +1,31 @@
+Risponimi come software architect senior.
+Studia a fondo il documento di specifiche di alto livello fornito dal cliente come customer_doc.pdf nei files di progetto.
+
+Noi andremo a sviluppare l'intero progetto dal punto di vista tecnico, dall'init del repo al depoly della soluzione in maniera professionale per il cliente.
+
+Ho due settimane di tempo per sviluppare il progetto.
+Dai il primo focus sulla realizzazione di una v1.0 con le funzionalità di recupero dati dalle API di Booking 
+relativamente alle corse, pubblicazione di queste sul sistema con possibilità di prenotazione da parte 
+dei Drivers e monitoraggio status e dati associati iniziali sul pannello admin per l'utente Admin.
+
+Una volta studiato a fondo il documento, fornisci una prima stima di architettura implementativa 
+basandoti su 2 settimane a disposizione e 32.500€ di budget totale per la v1.0.
+
+Tieni in conto che sarò io a svilupparlo con Claude Code come senior developer e senior software architect.
+
+Utilizza python lato backend, e il sistema migliore per sviluppare unico codice e avere l'app disponibile via browser, Android e iOS.
+React Native può andar bene? Cosa consigli? Analizza anche il moc presente come codice in html/css/js all'interno della cartella del progetto
+per recuperare le schermate del MOC con flussi e funzionalità dell'app.
+
+Studia a fondo i files context.txt, customer_doc.pdf e istruzioni.txt ed estrapola da lì tutte le info sull'architettura.
+
+Pianifichiamo lo sviluppo e, dopo aver redatto un documento che illustri con grafici lo schema e l'architettura software lato backend,
+scrivi anche altri 2 files per le stesse richieste per l'interfaccia frontend per app Android/iOS per i Driver.
+Analizza e capisci se ha più senso sviluppare un'unica app con accesso come admin (come adesso) considerando che l'admin dovranno accedere 
+quasi sempre da webapp da browser desktop, ma bisogna avere la possibilità di accedere anche da mobile.
+
+Se la situazione che ha più senso è quella di avere app per android/ios per driver e webapp per admin, procediamo in questo senso.
+
+Una volta prodotto i files di architettura software completi per tutte le parti coinvolte potremo procedere con lo sviluppo.
+
+Procediamo.
