@@ -16,6 +16,8 @@ import ProfilePage from './pages/driver/ProfilePage';
 import AdminLoginPage from './pages/admin/AdminLoginPage';
 import AdminTwoFactorPage from './pages/admin/AdminTwoFactorPage';
 import DashboardPage from './pages/admin/DashboardPage';
+import AddDriverPage from './pages/admin/AddDriverPage';
+import AddPartnerPage from './pages/admin/AddPartnerPage';
 
 // Protected route component
 function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: string[] }) {
@@ -64,6 +66,16 @@ function App() {
         <Route path="/admin/dashboard" element={
           <ProtectedRoute allowedRoles={['admin', 'assistant', 'finance']}>
             <DashboardPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/add-driver" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AddDriverPage />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/add-partner" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <AddPartnerPage />
           </ProtectedRoute>
         } />
 
