@@ -16,8 +16,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-def create_access_token(user_id: str, expires_delta: timedelta | None = None) -> str:
-    """Create a JWT access token."""
+def create_access_token(user_id: str, extra_claims: dict | None = None, expires_delta: timedelta | None = None) -> str:
+    """Create a JWT access token with optional extra claims (role, email, etc.)."""
     if expires_delta is None:
         expires_delta = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
 
@@ -27,6 +27,8 @@ def create_access_token(user_id: str, expires_delta: timedelta | None = None) ->
         "exp": expire,
         "type": "access"
     }
+    if extra_claims:
+        to_encode.update(extra_claims)
     return jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
 
 

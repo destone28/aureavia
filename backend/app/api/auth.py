@@ -91,8 +91,14 @@ async def verify_2fa(
             detail="Invalid or expired 2FA code"
         )
 
-    # Create access and refresh tokens
-    access_token = create_access_token(str(user.id))
+    # Create access and refresh tokens (include user info for frontend)
+    user_claims = {
+        "email": user.email,
+        "role": user.role.value,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    }
+    access_token = create_access_token(str(user.id), extra_claims=user_claims)
     refresh_token = create_refresh_token(str(user.id))
 
     return TokenResponse(
@@ -127,8 +133,14 @@ async def refresh_access_token(
             detail="User not found"
         )
 
-    # Create new access token
-    access_token = create_access_token(str(user.id))
+    # Create new access token with user claims
+    user_claims = {
+        "email": user.email,
+        "role": user.role.value,
+        "first_name": user.first_name,
+        "last_name": user.last_name,
+    }
+    access_token = create_access_token(str(user.id), extra_claims=user_claims)
 
     return TokenResponse(
         access_token=access_token,
