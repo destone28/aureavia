@@ -16,7 +16,7 @@ class DriverBase(BaseModel):
     insurance_number: str | None = None
     insurance_expiry: date | None = None
     vehicle_inspection_date: date | None = None
-    special_permits: dict | None = None
+    special_permits: list | dict | None = None
 
 
 class DriverCreate(DriverBase):
@@ -38,7 +38,7 @@ class DriverUpdate(BaseModel):
     insurance_number: str | None = None
     insurance_expiry: date | None = None
     vehicle_inspection_date: date | None = None
-    special_permits: dict | None = None
+    special_permits: list | dict | None = None
 
 
 class DriverResponse(DriverBase):

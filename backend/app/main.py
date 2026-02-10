@@ -28,15 +28,15 @@ app.add_middleware(
 )
 
 # Include API routers
-from app.api import auth  # , rides, drivers, companies, reports, notifications, webhook
+from app.api import auth, rides, drivers, companies, reports, notifications, webhook
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
-# app.include_router(rides.router, prefix="/api/rides", tags=["rides"])
-# app.include_router(drivers.router, prefix="/api/drivers", tags=["drivers"])
-# app.include_router(companies.router, prefix="/api/companies", tags=["companies"])
-# app.include_router(reports.router, prefix="/api/reports", tags=["reports"])
-# app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
-# app.include_router(webhook.router, prefix="/api/webhook", tags=["webhook"])
+app.include_router(rides.router, prefix="/api/rides", tags=["rides"])
+app.include_router(drivers.router, prefix="/api/drivers", tags=["drivers"])
+app.include_router(companies.router, prefix="/api/companies", tags=["companies"])
+app.include_router(reports.router, prefix="/api/reports", tags=["reports"])
+app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
+app.include_router(webhook.router, prefix="/api/webhook", tags=["webhook"])
 
 
 @app.get("/api/health")
