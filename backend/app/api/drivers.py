@@ -92,6 +92,33 @@ def _build_driver_with_user(driver: Driver) -> DriverWithUserResponse:
 
 
 # ---------------------------------------------------------------------------
+# GET /me — Current driver's own profile
+# ---------------------------------------------------------------------------
+
+@router.get("/me", response_model=DriverWithUserResponse)
+async def get_my_driver_profile(
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Get the current authenticated driver's profile."""
+    query = (
+        select(Driver)
+        .options(selectinload(Driver.user), selectinload(Driver.ncc_company))
+        .where(Driver.user_id == current_user.id)
+    )
+    result = await db.execute(query)
+    driver = result.scalar_one_or_none()
+
+    if not driver:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No driver profile found for this user",
+        )
+
+    return _build_driver_with_user(driver)
+
+
+# ---------------------------------------------------------------------------
 # GET / — List all drivers (admin/assistant/finance)
 # ---------------------------------------------------------------------------
 

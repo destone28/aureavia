@@ -7,6 +7,7 @@ class DashboardKPIs(BaseModel):
     active_drivers: int
     total_revenue: float
     avg_rating: float
+    rides_today: int = 0
     rides_change_pct: float = 0.0
     revenue_change_pct: float = 0.0
 

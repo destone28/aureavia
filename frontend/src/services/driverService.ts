@@ -35,12 +35,8 @@ export interface DriverStats {
 }
 
 export async function fetchMyDriver(): Promise<DriverProfile> {
-  // We need to find the driver by the current user ID
-  // For now, use the drivers list and filter by user
-  const { data } = await api.get('/drivers/');
-  const authUser = JSON.parse(atob(localStorage.getItem('access_token')?.split('.')[1] || ''));
-  const myDriver = data.find((d: any) => d.user_id === authUser.sub);
-  return myDriver;
+  const { data } = await api.get('/drivers/me');
+  return data;
 }
 
 export async function fetchDriverStats(driverId: string): Promise<DriverStats> {

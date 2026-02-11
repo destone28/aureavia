@@ -28,7 +28,7 @@ app.add_middleware(
 )
 
 # Include API routers
-from app.api import auth, rides, drivers, companies, reports, notifications, webhook
+from app.api import auth, rides, drivers, companies, reports, notifications, webhook, booking_admin, etg
 
 app.include_router(auth.router, prefix="/api/auth", tags=["auth"])
 app.include_router(rides.router, prefix="/api/rides", tags=["rides"])
@@ -37,6 +37,8 @@ app.include_router(companies.router, prefix="/api/companies", tags=["companies"]
 app.include_router(reports.router, prefix="/api/reports", tags=["reports"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
 app.include_router(webhook.router, prefix="/api/webhook", tags=["webhook"])
+app.include_router(booking_admin.router, prefix="/api/booking", tags=["booking"])
+app.include_router(etg.router, prefix="/api/etg", tags=["etg"])
 
 
 @app.get("/api/health")

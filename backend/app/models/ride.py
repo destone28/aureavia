@@ -1,4 +1,4 @@
-from sqlalchemy import String, Integer, TIMESTAMP, ForeignKey, DECIMAL, Text, Enum as SQLEnum
+from sqlalchemy import String, Integer, TIMESTAMP, ForeignKey, DECIMAL, Text, Enum as SQLEnum, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
 import uuid
@@ -62,6 +62,14 @@ class Ride(Base):
     # Assignment
     driver_id: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), index=True)
     assigned_by: Mapped[uuid.UUID | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+
+    # Booking.com integration
+    booking_reference: Mapped[str | None] = mapped_column(String(100), index=True)
+    booking_state_hash: Mapped[str | None] = mapped_column(String(255))
+    booking_customer_ref: Mapped[str | None] = mapped_column(String(100))
+    flight_number: Mapped[str | None] = mapped_column(String(20))
+    booking_services: Mapped[dict | list | None] = mapped_column(JSON)
+    booking_raw_payload: Mapped[dict | None] = mapped_column(JSON)
 
     # Critical ride handling
     critical_at: Mapped[datetime | None] = mapped_column(TIMESTAMP(timezone=True))

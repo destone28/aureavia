@@ -65,6 +65,10 @@ class RideResponse(RideBase):
     started_at: datetime | None
     completed_at: datetime | None
     critical_at: datetime | None
+    # Booking.com fields
+    booking_reference: str | None = None
+    flight_number: str | None = None
+    booking_services: list | dict | None = None
     created_at: datetime
     updated_at: datetime
 

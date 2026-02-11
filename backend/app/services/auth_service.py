@@ -1,3 +1,4 @@
+import logging
 import random
 import string
 from datetime import datetime, timedelta, timezone
@@ -11,7 +12,9 @@ from app.utils.security import (
     create_refresh_token,
     create_temp_token,
 )
-from app.config import settings
+from app.utils.email import send_2fa_email
+
+logger = logging.getLogger(__name__)
 
 
 def generate_2fa_code() -> str:
@@ -30,23 +33,24 @@ async def authenticate_user(db: AsyncSession, email: str, password: str) -> User
     return user
 
 
-async def initiate_2fa(db: AsyncSession, user: User) -> str:
-    """
-    Generate and store a 2FA code for the user.
-    Returns the code (in dev mode) or None (in production).
+async def initiate_2fa(db: AsyncSession, user: User) -> bool:
+    """Generate, store, and send a 2FA code to the user.
+
+    The email module handles DEV_MODE internally:
+    - DEV_MODE=True → code logged to console
+    - DEV_MODE=False → code sent via SMTP
+
+    Returns True if the code was delivered successfully.
     """
     code = generate_2fa_code()
     user.two_factor_code = hash_password(code)  # Store hashed
     user.two_factor_expires = datetime.now(timezone.utc) + timedelta(minutes=10)
     await db.flush()
 
-    # In dev mode, return the code; in prod, send email and return None
-    if settings.DEV_MODE:
-        print(f"\n🔐 2FA CODE for {user.email}: {code}\n")
-        return code
-    else:
-        # TODO: Send email with code
-        return None
+    sent = await send_2fa_email(user.email, code)
+    if not sent:
+        logger.error("Failed to send 2FA code to %s", user.email)
+    return sent
 
 
 async def verify_2fa_code(db: AsyncSession, user: User, code: str) -> bool:

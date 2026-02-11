@@ -2,24 +2,31 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.database import get_db
+from datetime import datetime, timedelta, timezone
 from app.schemas.auth import (
     LoginRequest,
     TwoFactorRequest,
     TokenResponse,
     TempTokenResponse,
     RefreshRequest,
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
 )
 from app.services.auth_service import (
     authenticate_user,
     initiate_2fa,
     verify_2fa_code,
+    generate_2fa_code,
 )
 from app.utils.security import (
     create_access_token,
     create_refresh_token,
     create_temp_token,
     decode_access_token,
+    hash_password,
+    verify_password,
 )
+from app.utils.email import send_reset_password_email
 from app.models.user import User
 from app.config import settings
 
@@ -43,8 +50,14 @@ async def login(
             detail="Incorrect email or password"
         )
 
-    # Generate and send 2FA code
-    await initiate_2fa(db, user)
+    # Generate and send 2FA code (DEV_MODE handled inside email module)
+    sent = await initiate_2fa(db, user)
+
+    if not sent:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Unable to send verification code. Please try again later.",
+        )
 
     # Create temporary token (10 min expiry)
     temp_token = create_temp_token(str(user.id))
@@ -148,4 +161,79 @@ async def refresh_access_token(
     )
 
 
-# TODO: Implement forgot-password and reset-password endpoints (Giorno 2)
+@router.post("/forgot-password")
+async def forgot_password(
+    request: ForgotPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Send a password reset code to the user's email.
+
+    Always returns 200 to avoid email enumeration.
+    """
+    result = await db.execute(select(User).where(User.email == request.email))
+    user = result.scalar_one_or_none()
+
+    if user:
+        code = generate_2fa_code()
+        user.two_factor_code = hash_password(code)
+        user.two_factor_expires = datetime.now(timezone.utc) + timedelta(minutes=30)
+        await db.flush()
+
+        # DEV_MODE check is handled inside send_reset_password_email
+        await send_reset_password_email(user.email, code)
+
+    return {"message": "If the email exists, a reset code has been sent"}
+
+
+@router.post("/reset-password")
+async def reset_password(
+    request: ResetPasswordRequest,
+    db: AsyncSession = Depends(get_db),
+):
+    """Reset password using the code received via email.
+
+    The token field contains 'email:code' format.
+    """
+    # Parse token as "email:code"
+    parts = request.token.split(":", 1)
+    if len(parts) != 2:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid reset token format. Use email:code",
+        )
+
+    email, code = parts
+    result = await db.execute(select(User).where(User.email == email))
+    user = result.scalar_one_or_none()
+
+    if not user or not user.two_factor_code or not user.two_factor_expires:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid or expired reset code",
+        )
+
+    if datetime.now(timezone.utc) > user.two_factor_expires:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Reset code has expired",
+        )
+
+    if not verify_password(code, user.two_factor_code):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid reset code",
+        )
+
+    if len(request.new_password) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 6 characters",
+        )
+
+    user.password_hash = hash_password(request.new_password)
+    user.two_factor_code = None
+    user.two_factor_expires = None
+    user.updated_at = datetime.now(timezone.utc)
+    await db.flush()
+
+    return {"message": "Password reset successfully"}

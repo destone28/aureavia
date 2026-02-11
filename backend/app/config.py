@@ -21,9 +21,9 @@ class Settings(BaseSettings):
     # Redis
     REDIS_URL: str = "redis://localhost:6379/0"
 
-    # Booking API (external)
-    BOOKING_API_KEY: str = ""
-    BOOKING_API_URL: str = ""
+    # ETG Transfers API (we are the supplier)
+    ETG_API_KEY: str = "etg-test-key-change-in-production"
+    ETG_API_SECRET: str = "etg-test-secret-change-in-production"
 
     # App
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]

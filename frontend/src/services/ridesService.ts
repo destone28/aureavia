@@ -25,6 +25,9 @@ export interface Ride {
   notes: string | null;
   driver_id: string | null;
   assigned_by: string | null;
+  booking_reference: string | null;
+  flight_number: string | null;
+  booking_services: Array<{ name: string; value: string | null }> | null;
   created_at: string;
   updated_at: string;
 }
@@ -49,7 +52,7 @@ export interface RidesFilters {
  * Fetch rides list with optional filters
  */
 export async function fetchRides(filters?: RidesFilters): Promise<RidesListResponse> {
-  const { data } = await api.get<RidesListResponse>('/rides', { params: filters });
+  const { data } = await api.get<RidesListResponse>('/rides/', { params: filters });
   return data;
 }
 
@@ -82,6 +85,14 @@ export async function startRide(id: string): Promise<Ride> {
  */
 export async function completeRide(id: string): Promise<Ride> {
   const { data } = await api.put<Ride>(`/rides/${id}/complete`);
+  return data;
+}
+
+/**
+ * Assign a ride to a driver (admin action)
+ */
+export async function assignRide(id: string, driverId: string): Promise<Ride> {
+  const { data } = await api.put<Ride>(`/rides/${id}/assign`, { driver_id: driverId });
   return data;
 }
 

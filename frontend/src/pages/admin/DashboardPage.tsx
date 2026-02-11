@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useAuthStore } from '../../store/authStore';
 import { useRidesStore } from '../../store/ridesStore';
@@ -16,6 +17,8 @@ import type {
   CompanyListItem,
 } from '../../services/adminService';
 import type { Ride } from '../../services/ridesService';
+import RideDetailModal from '../../components/admin/RideDetailModal';
+import EditDriverModal from '../../components/admin/EditDriverModal';
 
 const tabs = [
   { id: 'overview', label: 'Overview' },
@@ -163,7 +166,8 @@ function OverviewTab() {
         />
         <KPICard
           title="Corse Oggi"
-          value={kpis ? kpis.rides_today.toLocaleString('it-IT') : '—'}
+          value={kpis ? (kpis.rides_today ?? 0).toLocaleString('it-IT') : '—'}
+          subtitle={kpis ? `Rating medio: ${(kpis.avg_rating ?? 0).toFixed(1)} ★` : undefined}
         />
       </div>
 
@@ -197,7 +201,7 @@ function OverviewTab() {
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#E0E0E0" />
-              <XAxis dataKey="period" tick={{ fontSize: 12, fill: '#666' }} />
+              <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#666' }} />
               <YAxis tick={{ fontSize: 12, fill: '#666' }} tickFormatter={(v: number) => `€${v}`} />
               <Tooltip
                 formatter={(value: number | undefined) => [`€ ${(value ?? 0).toLocaleString('it-IT', { minimumFractionDigits: 2 })}`, 'Ricavi']}
@@ -205,7 +209,7 @@ function OverviewTab() {
               />
               <Area
                 type="monotone"
-                dataKey="revenue"
+                dataKey="amount"
                 stroke="#FF8C00"
                 strokeWidth={2}
                 fill="url(#colorRevenue)"
@@ -225,77 +229,131 @@ function OverviewTab() {
 // --- Corse (Rides) Tab ---
 
 function RidesTab() {
-  const { rides, isLoading, loadRides } = useRidesStore();
+  const { rides, isLoading, loadRides, setFilters, filters } = useRidesStore();
+  const [selectedRide, setSelectedRide] = useState<Ride | null>(null);
+  const [statusFilter, setStatusFilter] = useState(filters.status || '');
 
   useEffect(() => {
     void loadRides();
   }, [loadRides]);
 
-  if (isLoading) return <Spinner />;
+  const handleStatusFilter = (status: string) => {
+    setStatusFilter(status);
+    setFilters({ status: status || undefined });
+    setTimeout(() => void loadRides(), 0);
+  };
+
+  const handleRideUpdate = (updatedRide: Ride) => {
+    setSelectedRide(updatedRide);
+    void loadRides();
+  };
+
+  if (isLoading && rides.length === 0) return <Spinner />;
 
   return (
-    <div className="bg-white rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] overflow-hidden">
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
-          <thead>
-            <tr className="border-b border-[#E0E0E0]">
-              <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">ID</th>
-              <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Passeggero</th>
-              <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Partenza</th>
-              <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Arrivo</th>
-              <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Data</th>
-              <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Stato</th>
-              <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide text-right">Prezzo</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rides.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-sm text-[#666]">
-                  Nessuna corsa trovata
-                </td>
+    <div className="space-y-4">
+      {/* Filters + Export */}
+      <div className="flex flex-wrap items-center gap-2">
+        <a
+          href={`${import.meta.env.VITE_API_URL || 'http://localhost:8000/api'}/reports/rides/export${statusFilter ? `?status=${statusFilter}` : ''}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="px-3 py-1.5 text-xs font-medium rounded-lg bg-[#E8F5E9] text-[#4CAF50] hover:bg-[#C8E6C9] transition-colors no-underline mr-2"
+        >
+          Esporta CSV
+        </a>
+        {['', 'to_assign', 'critical', 'booked', 'in_progress', 'completed', 'cancelled'].map((s) => {
+          const label = s === '' ? 'Tutte' : (statusConfig[s]?.label ?? s);
+          return (
+            <button
+              key={s}
+              onClick={() => handleStatusFilter(s)}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg border-none cursor-pointer transition-colors ${
+                statusFilter === s
+                  ? 'bg-[#FF8C00] text-white'
+                  : 'bg-white text-[#666] hover:bg-[#F5F5F5]'
+              }`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Table */}
+      <div className="bg-white rounded-2xl shadow-[0_4px_16px_rgba(0,0,0,0.06)] overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="border-b border-[#E0E0E0]">
+                <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">ID</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Passeggero</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Partenza</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Arrivo</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Data</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide">Stato</th>
+                <th className="px-6 py-4 text-xs font-semibold text-[#666] uppercase tracking-wide text-right">Prezzo</th>
               </tr>
-            ) : (
-              rides.map((ride: Ride) => (
-                <tr
-                  key={ride.id}
-                  className="border-b border-[#F0F0F0] hover:bg-[#FAFAFA] cursor-pointer transition-colors"
-                >
-                  <td className="px-6 py-4 text-sm text-[#2D2D2D] font-mono">
-                    {ride.external_id ?? ride.id.slice(0, 8)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#2D2D2D]">
-                    {ride.passenger_name ?? '—'}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#666] max-w-[200px] truncate">
-                    {ride.pickup_address}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#666] max-w-[200px] truncate">
-                    {ride.dropoff_address}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#666] whitespace-nowrap">
-                    {new Date(ride.scheduled_at).toLocaleDateString('it-IT', {
-                      day: '2-digit',
-                      month: '2-digit',
-                      year: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </td>
-                  <td className="px-6 py-4">
-                    <StatusBadge status={ride.status} />
-                  </td>
-                  <td className="px-6 py-4 text-sm text-[#2D2D2D] font-semibold text-right whitespace-nowrap">
-                    {ride.price != null
-                      ? `€ ${ride.price.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`
-                      : '—'}
+            </thead>
+            <tbody>
+              {rides.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="px-6 py-12 text-center text-sm text-[#666]">
+                    Nessuna corsa trovata
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                rides.map((ride: Ride) => (
+                  <tr
+                    key={ride.id}
+                    onClick={() => setSelectedRide(ride)}
+                    className="border-b border-[#F0F0F0] hover:bg-[#FAFAFA] cursor-pointer transition-colors"
+                  >
+                    <td className="px-6 py-4 text-sm text-[#2D2D2D] font-mono">
+                      {ride.external_id ?? ride.id.slice(0, 8)}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#2D2D2D]">
+                      {ride.passenger_name ?? '—'}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#666] max-w-[200px] truncate">
+                      {ride.pickup_address}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#666] max-w-[200px] truncate">
+                      {ride.dropoff_address}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#666] whitespace-nowrap">
+                      {new Date(ride.scheduled_at).toLocaleDateString('it-IT', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </td>
+                    <td className="px-6 py-4">
+                      <StatusBadge status={ride.status} />
+                    </td>
+                    <td className="px-6 py-4 text-sm text-[#2D2D2D] font-semibold text-right whitespace-nowrap">
+                      {ride.price != null
+                        ? `€ ${ride.price.toLocaleString('it-IT', { minimumFractionDigits: 2 })}`
+                        : '—'}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      {/* Ride Detail Modal */}
+      {selectedRide && (
+        <RideDetailModal
+          ride={selectedRide}
+          onClose={() => setSelectedRide(null)}
+          onUpdate={handleRideUpdate}
+        />
+      )}
     </div>
   );
 }
@@ -305,22 +363,23 @@ function RidesTab() {
 function DriversTab() {
   const [drivers, setDrivers] = useState<DriverListItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingDriver, setEditingDriver] = useState<DriverListItem | null>(null);
   const addToast = useUIStore((s) => s.addToast);
 
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const data = await fetchDriversList();
-        if (!cancelled) setDrivers(data);
-      } catch {
-        addToast('error', 'Errore nel caricamento dei driver');
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
+  const loadDrivers = useCallback(async () => {
+    try {
+      const data = await fetchDriversList();
+      setDrivers(data);
+    } catch {
+      addToast('error', 'Errore nel caricamento dei driver');
+    } finally {
+      setLoading(false);
+    }
   }, [addToast]);
+
+  useEffect(() => {
+    void loadDrivers();
+  }, [loadDrivers]);
 
   if (loading) return <Spinner />;
 
@@ -346,7 +405,10 @@ function DriversTab() {
               </h4>
               <p className="text-xs text-[#666] mt-0.5">{driver.email}</p>
             </div>
-            <button className="text-xs text-[#FF8C00] font-medium bg-transparent border-none cursor-pointer hover:underline">
+            <button
+              onClick={() => setEditingDriver(driver)}
+              className="text-xs text-[#FF8C00] font-medium bg-transparent border-none cursor-pointer hover:underline"
+            >
               Modifica
             </button>
           </div>
@@ -379,6 +441,18 @@ function DriversTab() {
           </div>
         </div>
       ))}
+
+      {editingDriver && (
+        <EditDriverModal
+          driver={editingDriver}
+          onClose={() => setEditingDriver(null)}
+          onSaved={() => {
+            setEditingDriver(null);
+            addToast('success', 'Driver aggiornato');
+            void loadDrivers();
+          }}
+        />
+      )}
     </div>
   );
 }
@@ -478,6 +552,7 @@ function PartnersTab() {
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<TabId>('overview');
   const { logout, user } = useAuthStore();
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen bg-[#F5F5F5] font-['Open_Sans']">
@@ -491,6 +566,18 @@ export default function DashboardPage() {
             <span className="text-sm text-[#666]">
               {user.first_name} {user.last_name}
             </span>
+          )}
+          {user?.role === 'admin' && (
+            <button
+              onClick={() => navigate('/admin/settings')}
+              className="text-sm text-[#666] hover:text-[#FF8C00] bg-transparent border-none cursor-pointer transition-colors flex items-center gap-1"
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="3" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+              </svg>
+              Impostazioni
+            </button>
           )}
           <button
             onClick={logout}

@@ -1,4 +1,7 @@
+import csv
+import io
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, func, extract, and_, case
 from app.database import get_db
@@ -95,6 +98,16 @@ async def get_dashboard_kpis(
     )
     avg_rating = round(float(avg_rating_result.scalar() or 0), 2)
 
+    # -- Rides today -----------------------------------------------------------
+    today_start = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    rides_today_result = await db.execute(
+        select(func.count(Ride.id)).where(
+            Ride.scheduled_at >= today_start,
+            Ride.scheduled_at < now,
+        )
+    )
+    rides_today = rides_today_result.scalar() or 0
+
     # -- Change percentages ---------------------------------------------------
     rides_change_pct = _calc_change_pct(total_rides, previous_rides)
     revenue_change_pct = _calc_change_pct(total_revenue, previous_revenue)
@@ -104,6 +117,7 @@ async def get_dashboard_kpis(
         active_drivers=active_drivers,
         total_revenue=total_revenue,
         avg_rating=avg_rating,
+        rides_today=rides_today,
         rides_change_pct=rides_change_pct,
         revenue_change_pct=revenue_change_pct,
     )
@@ -178,6 +192,78 @@ async def get_earnings(
         data.append(EarningsDataPoint(date=label, amount=float(amount)))
 
     return EarningsReport(granularity=granularity, data=data)
+
+
+# ---------------------------------------------------------------------------
+# GET /rides/export  -  CSV export of rides
+# ---------------------------------------------------------------------------
+@router.get(
+    "/rides/export",
+    dependencies=[Depends(require_role(*REPORT_ROLES))],
+)
+async def export_rides_csv(
+    status_filter: Optional[str] = Query(None, alias="status"),
+    date_from: Optional[date] = Query(None),
+    date_to: Optional[date] = Query(None),
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Export rides as CSV file with optional filters."""
+    query = select(Ride).order_by(Ride.scheduled_at.desc())
+
+    if status_filter:
+        query = query.where(Ride.status == status_filter)
+    if date_from:
+        dt_from = datetime(date_from.year, date_from.month, date_from.day, tzinfo=timezone.utc)
+        query = query.where(Ride.scheduled_at >= dt_from)
+    if date_to:
+        dt_to = datetime(date_to.year, date_to.month, date_to.day, 23, 59, 59, tzinfo=timezone.utc)
+        query = query.where(Ride.scheduled_at <= dt_to)
+
+    result = await db.execute(query)
+    rides = result.scalars().all()
+
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow([
+        "ID", "ID Esterno", "Piattaforma", "Stato",
+        "Partenza", "Arrivo", "Data Prevista",
+        "Passeggero", "Telefono", "N. Passeggeri",
+        "Distanza (km)", "Durata (min)", "Prezzo", "Quota Driver",
+        "Volo", "Rif. Prenotazione", "Note",
+        "Creata il", "Aggiornata il",
+    ])
+
+    for ride in rides:
+        writer.writerow([
+            str(ride.id),
+            ride.external_id or "",
+            ride.source_platform,
+            ride.status.value if ride.status else "",
+            ride.pickup_address,
+            ride.dropoff_address,
+            ride.scheduled_at.strftime("%Y-%m-%d %H:%M") if ride.scheduled_at else "",
+            ride.passenger_name or "",
+            ride.passenger_phone or "",
+            ride.passenger_count,
+            ride.distance_km or "",
+            ride.duration_min or "",
+            float(ride.price) if ride.price else "",
+            float(ride.driver_share) if ride.driver_share else "",
+            ride.flight_number or "",
+            ride.booking_reference or "",
+            ride.notes or "",
+            ride.created_at.strftime("%Y-%m-%d %H:%M") if ride.created_at else "",
+            ride.updated_at.strftime("%Y-%m-%d %H:%M") if ride.updated_at else "",
+        ])
+
+    output.seek(0)
+    today_str = date.today().strftime("%Y%m%d")
+    return StreamingResponse(
+        iter([output.getvalue()]),
+        media_type="text/csv",
+        headers={"Content-Disposition": f"attachment; filename=aureavia-corse-{today_str}.csv"},
+    )
 
 
 # ---------------------------------------------------------------------------

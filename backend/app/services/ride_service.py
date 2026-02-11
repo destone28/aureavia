@@ -10,6 +10,7 @@ from app.models.ride_history import RideHistory
 from app.models.driver import Driver
 from app.models.notification import Notification
 from app.models.user import User, UserRole
+from app.utils.email import send_ride_assignment_email
 
 
 # ---------------------------------------------------------------------------
@@ -274,7 +275,7 @@ async def assign_ride(
 
     await db.flush()
 
-    # Notify the driver
+    # Notify the driver (in-app notification)
     notification = _create_notification(
         user_id=driver_id,
         notification_type="ride_assigned",
@@ -284,6 +285,18 @@ async def assign_ride(
     )
     db.add(notification)
     await db.flush()
+
+    # Send email notification to driver (non-blocking: failure is logged, not raised)
+    ride_date = ride.scheduled_at.strftime("%d/%m/%Y - %H:%M") if ride.scheduled_at else "Da definire"
+    driver_name = f"{driver_user.first_name} {driver_user.last_name}"
+    await send_ride_assignment_email(
+        to=driver_user.email,
+        driver_name=driver_name,
+        ride_date=ride_date,
+        pickup=ride.pickup_address,
+        dropoff=ride.dropoff_address,
+        passenger=ride.passenger_name or "Non specificato",
+    )
 
     return ride
 

@@ -226,6 +226,37 @@ export default function RideDetailPage() {
             </div>
           )}
 
+          {/* Booking.com info */}
+          {(ride.flight_number || (ride.booking_services && ride.booking_services.length > 0)) && (
+            <div className="bg-[#E3F2FD] border-l-4 border-[#003580] rounded-xl p-4 mb-3">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="inline-block px-2 py-0.5 rounded text-xs font-semibold text-white" style={{ backgroundColor: '#003580' }}>
+                  Booking.com
+                </span>
+              </div>
+              {ride.flight_number && (
+                <div className="flex items-center gap-2 mb-2">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#003580" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z" />
+                  </svg>
+                  <span className="text-sm text-[#2D2D2D]">
+                    <strong>Volo:</strong> {ride.flight_number}
+                  </span>
+                </div>
+              )}
+              {ride.booking_services && ride.booking_services.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mt-1">
+                  {ride.booking_services.map((s, i) => (
+                    <span key={i} className="inline-block px-2 py-0.5 rounded-full bg-white text-xs text-[#003580] font-medium">
+                      {s.name === 'meetAndGreet' ? 'Meet & Greet' : s.name}
+                      {s.value ? `: ${s.value}` : ''}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {/* Notes */}
           {ride.notes && (
             <div className="bg-[#FFFBF0] border-l-4 border-[#FFC107] rounded-xl p-4 mb-3">

@@ -4,16 +4,15 @@ export interface DashboardKPIs {
   total_rides: number;
   total_revenue: number;
   active_drivers: number;
+  avg_rating: number;
   rides_today: number;
   rides_change_pct: number;
   revenue_change_pct: number;
 }
 
 export interface EarningsDataPoint {
-  period: string;
-  revenue: number;
-  driver_cost: number;
-  margin: number;
+  date: string;
+  amount: number;
 }
 
 export interface EarningsData {

@@ -18,6 +18,11 @@ import AdminTwoFactorPage from './pages/admin/AdminTwoFactorPage';
 import DashboardPage from './pages/admin/DashboardPage';
 import AddDriverPage from './pages/admin/AddDriverPage';
 import AddPartnerPage from './pages/admin/AddPartnerPage';
+import SettingsPage from './pages/admin/SettingsPage';
+
+// Common pages
+import ForgotPasswordPage from './pages/common/ForgotPasswordPage';
+import ResetPasswordPage from './pages/common/ResetPasswordPage';
 
 // Protected route component
 function ProtectedRoute({ children, allowedRoles }: { children: React.ReactNode; allowedRoles?: string[] }) {
@@ -78,6 +83,15 @@ function App() {
             <AddPartnerPage />
           </ProtectedRoute>
         } />
+        <Route path="/admin/settings" element={
+          <ProtectedRoute allowedRoles={['admin']}>
+            <SettingsPage />
+          </ProtectedRoute>
+        } />
+
+        {/* Password reset */}
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         {/* Default redirect */}
         <Route path="/" element={<Navigate to="/login" replace />} />
